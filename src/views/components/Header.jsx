@@ -1,9 +1,83 @@
 import React from 'react'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-function Header() {
+import { firebaseConfig } from '../../firebase/config';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+// import { FirebaseApp } from 'firebase/app';
+import { Eggy } from '@s-r0/eggy-js';
 
-    const [categoriesPlus,setcategoriesPlus] = useState(false)
+function Header() {
+    const [checkLogin, setCheckLogin] = useState(false)
+    const [categoriesPlus, setcategoriesPlus] = useState(false)
+    const [userS, setUserS] = useState(null)
+    const [email, setEmail] = useState()
+    const auth = getAuth();
+    useEffect(() => {
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in, see docs for a list of available properties
+                // https://firebase.google.com/docs/reference/js/firebase.User
+                const uid = user.uid;
+                setCheckLogin(true)
+                setEmail(user.email)
+                // ...
+            } else {
+                // User is signed out
+                // ...
+                setCheckLogin(false)
+            }
+        });
+    }, [checkLogin])
+
+    const logOut = () => {
+        auth.signOut().then(() => {
+            // Đăng xuất thành công
+            // console.log(first)
+            setCheckLogin(false)
+            Eggy({
+                title: 'Sign Out',
+                message: `Đăng xuất thành công!`,
+                type: 'success',
+                duration: 2000,
+                position: 'top-left'
+            });
+          }).catch((error) => {
+            // Xảy ra lỗi
+          });
+    }
+
+    const checkingLogin = () => {
+        if (checkLogin) {
+            // console.log(email)
+            return (
+                <>
+                    <button className="dropdown-toggle" data-bs-toggle="dropdown"><img
+                        src="./src/assets/images/icons/user_5.svg" className="svg_img top_svg" alt="" /><span
+                            className="ec-btn-title"><b>{email}</b></span></button>
+                    <ul className="dropdown-menu dropdown-menu-right">
+                        <li><Link to="/profile" className="dropdown-item">Trang cá nhân</Link></li>
+                        <li><a className="dropdown-item" href="checkout.html">Thanh toán</a></li>
+                        <li><Link className="dropdown-item" to="/" onClick={logOut}>Đăng xuất</Link></li>
+                    </ul>
+                </>
+            )
+        }
+            return (
+                <>
+                <div>
+                    <button className="dropdown-toggle" data-bs-toggle="dropdown"><img
+                        src="./src/assets/images/icons/user_5.svg" className="svg_img top_svg" alt="" /><span
+                            className="ec-btn-title">Đăng nhập</span></button>
+                    <ul className="dropdown-menu dropdown-menu-right">
+                        <li><Link to="/signup" className="dropdown-item" href="register.html">Đăng ký</Link></li>
+                        <li><a className="dropdown-item" href="checkout.html">Thanh toán</a></li>
+                        <li><Link className="dropdown-item" to="/login">Đăng nhập</Link></li>
+                    </ul>
+                    </div>
+                </>
+            )
+        
+    }
 
     const cartMini = () => {
         let cart = document.querySelector("#ec-side-cart");
@@ -17,20 +91,20 @@ function Header() {
     }
 
     const showCategories = () => {
-        if(categoriesPlus == false){
+        if (categoriesPlus == false) {
             let categories = document.querySelector("#ec-category-menu");
             categories.style.display = "block"
             setcategoriesPlus(true)
-        }else{
+        } else {
             let categories = document.querySelector("#ec-category-menu");
             categories.style.display = "none"
             setcategoriesPlus(false)
         }
-        
+
     }
     return (
         <div>
-            <header className="ec-header" style={{color: "white"}}>
+            <header className="ec-header" style={{ color: "white" }}>
                 {/* <!--Ec Header Top Start --> */}
                 <div className="header-top">
                     <div className="container">
@@ -79,15 +153,16 @@ function Header() {
                                 <div className="header-top-right-inner d-flex justify-content-end">
 
                                     {/* <!-- Header User Start --> */}
-                                    <div className="ec-header-user dropdown">
-                                        <button className="dropdown-toggle" data-bs-toggle="dropdown"><img
+                                    <div className="ec-header-user dropdown" id='userSS'>
+                                        {checkingLogin()}
+                                        {/* <button className="dropdown-toggle" data-bs-toggle="dropdown"><img
                                             src="./src/assets/images/icons/user_5.svg" className="svg_img top_svg" alt="" /><span
                                                 className="ec-btn-title">Đăng nhập</span></button>
                                         <ul className="dropdown-menu dropdown-menu-right">
                                             <li><Link to="/signup" className="dropdown-item" href="register.html">Đăng ký</Link></li>
                                             <li><a className="dropdown-item" href="checkout.html">Thanh toán</a></li>
-                                            <li><a className="dropdown-item" href="login.html">Đăng nhập</a></li>
-                                        </ul>
+                                            <li><Link className="dropdown-item" to="/login">Đăng nhập</Link></li>
+                                        </ul> */}
                                     </div>
                                     {/* <!-- Header User End --> */}
                                     {/* <!-- Header wishlist Start --> */}
@@ -150,9 +225,7 @@ function Header() {
                                 {/* <!-- Ec Header Logo Start --> */}
                                 <div className="align-self-center ec-header-logo ">
                                     <div className="header-logo">
-                                        <a href="index.html"><img src="./src/assets/images/logo/logo-5.png" alt="Site Logo" /><img
-                                            className="dark-logo" src="./src/assets/images/logo/dark-logo-5.png" alt="Site Logo"
-                                        /></a>
+                                        <Link to="/"><img src="./src/assets/images/logo/logo-5.png" alt="Site Logo" /></Link>
                                     </div>
                                 </div>
                                 {/* <!-- Ec Header Logo End --> */}
@@ -182,7 +255,7 @@ function Header() {
 
                                         {/* <!-- Header wishlist End --> */}
                                         {/* <!-- Header Cart Start --> */}
-                                        <a  className="ec-header-btn ec-side-toggle" onClick={cartMini}>
+                                        <a className="ec-header-btn ec-side-toggle" onClick={cartMini}>
                                             <div className="header-icon"><img src="./src/assets/images/icons/cart_5.svg"
                                                 className="svg_img header_svg" alt="" /></div>
                                             <span className="ec-btn-title"><span className="ec-cart-count">0</span> sản phẩm - $0.00</span>
@@ -770,36 +843,36 @@ function Header() {
                         <ul className="eccart-pro-items">
                             <li>
                                 <a href="product-gallery-full-width.html" className="sidecart_pro_img"><img
-                                    src="./src/assets/images/product-image/39_1.jpg" alt="product"/></a>
+                                    src="./src/assets/images/product-image/39_1.jpg" alt="product" /></a>
                                 <div className="ec-pro-content">
                                     <a href="single-product-gallery-full-width.html" className="cart_pro_title">Máy ảnh tức thì với hai album</a>
                                     <span className="cart-price"><span>$450</span> x 1</span>
                                     <div className="qty-plus-minus">
-                                        <input className="qty-input" type="text" name="ec_qtybtn" defaultValue={'1'}  />
+                                        <input className="qty-input" type="text" name="ec_qtybtn" defaultValue={'1'} />
                                     </div>
                                     <a href="#" className="remove">×</a>
                                 </div>
                             </li>
                             <li>
                                 <a href="product-gallery-full-width.html" className="sidecart_pro_img"><img
-                                    src="./src/assets/images/product-image/40_1.jpg" alt="product"/></a>
+                                    src="./src/assets/images/product-image/40_1.jpg" alt="product" /></a>
                                 <div className="ec-pro-content">
                                     <a href="product-gallery-full-width.html" className="cart_pro_title">Google nest không dây</a>
                                     <span className="cart-price"><span>$360</span> x 1</span>
                                     <div className="qty-plus-minus">
-                                        <input className="qty-input" type="text" name="ec_qtybtn"  defaultValue={'1'}/>
+                                        <input className="qty-input" type="text" name="ec_qtybtn" defaultValue={'1'} />
                                     </div>
                                     <a href="#" className="remove">×</a>
                                 </div>
                             </li>
                             <li>
                                 <a href="product-gallery-full-width.html" className="sidecart_pro_img"><img
-                                    src="./src/assets/images/product-image/41_1.jpg" alt="product"/></a>
+                                    src="./src/assets/images/product-image/41_1.jpg" alt="product" /></a>
                                 <div className="ec-pro-content">
                                     <a href="product-gallery-full-width.html" className="cart_pro_title">Earbuds không dây thế hệ thứ 3</a>
                                     <span className="cart-price"><span>$30</span> x 1</span>
                                     <div className="qty-plus-minus">
-                                        <input className="qty-input" type="text" name="ec_qtybtn"  defaultValue={'1'}/>
+                                        <input className="qty-input" type="text" name="ec_qtybtn" defaultValue={'1'} />
                                     </div>
                                     <a href="#" className="remove">×</a>
                                 </div>
@@ -825,9 +898,9 @@ function Header() {
                                 </tbody>
                             </table>
                         </div>
-                        <div className="cart_btn" style={{ height: "50px"}}>
-                            <a  className="btn btn-primary">Xem giỏ hàng</a>
-                            <a  className="btn btn-secondary">Thanh toán</a>
+                        <div className="cart_btn" style={{ height: "50px" }}>
+                            <a className="btn btn-primary">Xem giỏ hàng</a>
+                            <a className="btn btn-secondary">Thanh toán</a>
                         </div>
                     </div>
                 </div>

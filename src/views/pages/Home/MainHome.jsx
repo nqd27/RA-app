@@ -6,12 +6,13 @@ function MainHome() {
         box: {
             width: "80%",
             padding: '15px 0',
-            height: '300px',
+            height: '350px',
             alignItem: 'center',
-            marginLeft: '11%'
+            marginLeft: '11%',
+            marginTop: "10px"
         },
         img: {
-            height: '300px', width: '500px'
+            height: '300px', width: '400px'
         }
     }
 
