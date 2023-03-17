@@ -34,12 +34,13 @@ function Header() {
             // Đăng xuất thành công
             // console.log(first)
             setCheckLogin(false)
+            localStorage.clear()
             Eggy({
                 title: 'Sign Out',
                 message: `Đăng xuất thành công!`,
                 type: 'success',
                 duration: 2000,
-                position: 'top-left'
+                position: 'top-right'
             });
           }).catch((error) => {
             // Xảy ra lỗi
@@ -150,7 +151,10 @@ function Header() {
                             {/* <!-- Header Top call End --> */}
                             {/* <!-- Header Top Language Currency --> */}
                             <div className="col header-top-right d-none d-lg-block">
-                                <div className="header-top-right-inner d-flex justify-content-end">
+                                <div className="header-top-right-inner d-flex justify-content-end" style={{
+                                    position: "relative",
+                                    zIndex: "1000"
+                                }}>
 
                                     {/* <!-- Header User Start --> */}
                                     <div className="ec-header-user dropdown" id='userSS'>

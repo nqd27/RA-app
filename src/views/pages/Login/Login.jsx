@@ -1,11 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Header from '../../components/Header'
 import Footer from '../../components/Footer'
 import { firebaseConfig } from '../../../firebase/config'
 import { initializeApp } from 'firebase/app'
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged  } from 'firebase/auth'
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth'
 import { Eggy } from '@s-r0/eggy-js';
 import { useEffect } from 'react'
+import dotenv from 'dotenv'
+import { Link } from 'react-router-dom'
 
 
 
@@ -13,18 +15,23 @@ function Login() {
 
     const app = initializeApp(firebaseConfig)
     const auth = getAuth(app)
-
+    const checkLogin = localStorage.getItem("checkLogin");
+    const [loginC, setLoginC] = useState(checkLogin)
+    // console.log(checkLogin)
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
             if (user) {
               // User is signed in, see docs for a list of available properties
               // https://firebase.google.com/docs/reference/js/firebase.User
               const uid = user.uid;
-              console.log(uid)
+            //   console.log(uid)
             //   alert("Bạn đã đăng nhập!!!")
-            setInterval(() => {
-                window.location = "http://localhost:5173/"
-            }, 1500);
+            // setInterval(() => {
+                // window.location = `${import.meta.env.VITE_LOCAL_URL}`
+                localStorage.setItem("checkLogin",true)
+                setLoginC(true)
+                // console.log(import.meta.env.VITE_LOCAL_URL)
+            // }, 1500);
               // ...
             } else {
               // User is signed out
@@ -38,45 +45,31 @@ function Login() {
         let password = document.querySelector("#password").value;
 
         let user = await signInWithEmailAndPassword(auth, email, password)
-        signInWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                // Signed in 
-                const user = userCredential.user;
-                let data = {
-                    timeLogin: user.metadata.lastSignInTime,
-                    uid: user.uid,
-                    status: user.emailVerified
-                }
-                // console.log(user)
-                console.log(data)
-                Eggy({
-                    title: 'Sign In',
-                    message: `Đăng nhập thành công!`,
-                    type: 'success',
-                    duration: 1000
-                });
 
-                setInterval(() => {
-                    window.location = "http://localhost:5173/"
-                }, 1500);
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.log(errorMessage)
-                Eggy({
-                    title: 'Sign In',
-                    message: `Đăng nhập thất bại!`,
-                    type: 'error',
-                    duration: 1000
-                });
-            });
+        console.log(user)
+        let data = {
+            timeLogin: user.user.metadata.lastSignInTime,
+            uid: user.user.uid,
+            status: user.user.emailVerified
+        }
+        // console.log(data)
+        Eggy({
+            title: 'Sign In',
+            message: `Đăng nhập thành công!`,
+            type: 'success',
+            duration: 1000
+        });
+        if (user) {
+
+        }
     }
 
     return (
         <>
             <Header />
-            <main className="main">
+            {
+                !loginC?
+                <main className="main">
                 <div className="container">
                     <section className="wrapper">
                         <div className="heading">
@@ -127,6 +120,16 @@ function Login() {
                     </section>
                 </div>
             </main>
+                 :
+                  <>
+                    <div className="main">
+                        <h1>Đăng nhập thành công</h1>
+                        <h2>Về <Link id='pageChange' to='/'>trang chủ</Link> hoặc <Link id='pageChange' to='/profile'>trang cá nhân</Link></h2>
+                        <img src="./src/assets/images/login.gif" alt="" />
+                    </div>
+                  </>
+            }
+            
             <Footer />
         </>
     )

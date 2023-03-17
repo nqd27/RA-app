@@ -33,9 +33,10 @@ function Signup() {
                         // window.location = `http://localhost:5173/login` ;
                         try {
                             await setDoc(doc(db, "Users", user.uid), {
-                                Email: user.email,
-                                PassWord: password,
-                                status: false
+                                email: user.email,
+                                password: password,
+                                status: false,
+                                vaitro: 'KHACHHANG'
                               });
                               setTimeout(() => {
                                 window.location = `http://localhost:5173/login`

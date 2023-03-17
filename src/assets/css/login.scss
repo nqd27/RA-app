@@ -1,5 +1,5 @@
 :root {
-	--color-white: #ffffff;
+	--color-white: #a8a8a851;
 	--color-light: #f1f5f9;
 	--color-black: #121212;
 	--color-night: #001632;
@@ -27,7 +27,7 @@ html {
 
 
 body {
-	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+	// font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 	font-size: 1rem;
 	font-weight: normal;
 	line-height: 1.5;
@@ -110,7 +110,8 @@ img {
 	.wrapper {
 		max-width: 28rem;
 		width: 100%;
-		margin: 2rem auto;
+		// margin: 2rem auto;
+		margin-left: 100px;
 		padding: 2rem 2.5rem;
 		border: none;
 		outline: none;
@@ -142,11 +143,16 @@ img {
 				border: none;
 				outline: none;
 				border-radius: 2rem;
-				color: var(--color-black);
-				background: rgba(176, 176, 176, 0.615);
+				color: black;
+				background: rgba(255, 255, 255, 0.615);
 				text-transform: unset;
 				text-rendering: optimizeLegibility;
                 border-color: black;
+				box-shadow: 1px 1px rgb(103, 103, 103);
+
+				&:focus{
+					background-color: #a2bde070;
+				}
 			}
 
 			.input-submit {
@@ -162,11 +168,16 @@ img {
 				border: none;
 				outline: none;
 				border-radius: 2rem;
-				color: var(--color-white);
-				background: var(--color-blue);
+				color: var(--color-blue);
+				background: white;
 				box-shadow: var(--shadow-medium);
 				text-transform: capitalize;
 				text-rendering: optimizeLegibility;
+
+				&:hover{
+					background-color: var(--color-blue);
+					color: white;
+				}
 			}
 		}
 
@@ -227,11 +238,25 @@ img {
 			}
 		}
 	}
+
+	img{
+		margin-left: -100px;
+	}
+
+	#pageChange{
+		color: rgba(0, 0, 255, 0.45);
+		text-transform: uppercase;
+		transition: all 0.3s;
+
+		&:hover{
+			color: blue;
+		}
+	}
 }
 
 
 /* Import Font Dancing Script */
-@import url(https://fonts.googleapis.com/css?family=Dancing+Script);
+// @import url(https://fonts.googleapis.com/css?family=Dancing+Script);
 
 * {
     margin: 0;
@@ -364,6 +389,30 @@ body {
     font-size: 28px;
     padding: 0 10px;
     width: 58%;
+
+	.card{
+		table{
+			tbody{
+				tr{
+					margin: 10px auto;
+					td{
+						input{
+							border: none;
+							box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+							border-radius: 5px;
+							height: 80%;
+							width: 80%;
+							transition: all 0.3s;
+
+							&:focus{
+								box-shadow: rgba(3, 102, 214, 0.3) 0px 0px 0px 3px;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 .main h2 {
@@ -432,4 +481,36 @@ body {
     color: #fffb01 !important;
 }
 
+#editProflie, #updateProfile{
+	transition: all 0.5s;
+
+	#valueD{
+		color: #001632;
+		font-size: 22px;
+		padding-left: 20px;
+
+		&:hover{
+			color:rgb(72, 0, 255)
+		}
+	}
+
+	button{
+		background-color: rgba(72, 0, 255, 0.453);
+
+		&:hover{
+			background-color: rgb(72, 0, 255);
+		}
+	}
+
+	#btn-cancel{
+		background-color: white;
+		transition: all 0.5s;
+		box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px 0px, rgba(0, 0, 0, 0.24) 0px 1px 2px 0px;
+		&:hover{
+			box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px 0px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px 0px inset;
+			background-color: rgba(72, 0, 255, 0.478);
+			color: white
+		}
+	}
+}
 /* End */

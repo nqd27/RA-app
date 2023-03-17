@@ -13,18 +13,6 @@ const db = getFirestore(app)
 
 export default function Home() {
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const querySnapshot = await getDocs(collection(db, "Users"));
-  //     querySnapshot.forEach((doc) => {
-  //       console.log(`ID: ${doc.id}`)
-  //       console.log(doc.data())
-  //     });
-  //   }
-
-  //   fetchData()
-  // }, [])
-
   return (
     <>
       <Header />

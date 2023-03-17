@@ -1,10 +1,11 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-function NavTop() {
+function NavTop(props) {
+  const {title} = props;
   return (
     <div className="navbar-top">
           <div className="title">
-            <h1>Thông tin người dùng</h1>
+            <h1>{title}</h1>
           </div>
 
           <ul>

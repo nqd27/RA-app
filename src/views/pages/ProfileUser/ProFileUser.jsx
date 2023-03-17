@@ -1,100 +1,76 @@
 import React from 'react'
 import Header from '../../components/Header'
 import Footer from '../../components/Footer'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import NavTop from './NavTop'
 import SideNave from './SideNave'
+import { firebaseConfig } from '../../../firebase/config'
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth'
+import { initializeApp } from 'firebase/app'
+import { getFirestore, doc, getDoc } from 'firebase/firestore'
+import { useEffect, useState } from 'react'
+import MainProfile from './MainProfile'
+
+const app = initializeApp(firebaseConfig)
+const auth = getAuth(app)
+const db = getFirestore(app)
 
 function ProFileUser() {
+  const location = useLocation();
+  // console.log(location.state)
+  // console.log(sure)
+  const [data, setData] = useState({})
+  const [data2, setData2] = useState();
+  const [checkEdit, setCheckEdit] = useState(false);
+  const arrA = []
+  useEffect(() => {
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const uid = user.uid;
+        setData({
+          uid: uid,
+          emailVerified: user.emailVerified,
+        })
 
+        const docRef = doc(db, "Users", uid);
+        const docSnap = await getDoc(docRef);
+        // console.log(docSnap.data())
+        setData2(docSnap.data())
+      } else {
+        // alert("Bạn chưa đăng nhập!!!")
+        window.location = `${import.meta.env.VITE_LOCAL_URL}`
+      }
+    })
+  }, [checkEdit])
+  // console.log(data2)
 
-  return (
-    <>
-      <div>
-        <NavTop/>
-        <SideNave/>
-        <div className="main">
-          <h2>DANH THIẾP</h2>
-          <div className="card">
-            <div className="card-body">
-              <i className="fa fa-pen fa-xs edit"></i>
-              <table>
-                <tbody>
-                  <tr>
-                    <td>Name</td>
-                    <td>:</td>
-                    <td>ImDezCode</td>
-                  </tr>
-                  <tr>
-                    <td>Email</td>
-                    <td>:</td>
-                    <td>imdezcode@gmail.com</td>
-                  </tr>
-                  <tr>
-                    <td>Address</td>
-                    <td>:</td>
-                    <td>Bali, Indonesia</td>
-                  </tr>
-                  <tr>
-                    <td>Hobbies</td>
-                    <td>:</td>
-                    <td>Diving, Reading Book</td>
-                  </tr>
-                  <tr>
-                    <td>Job</td>
-                    <td>:</td>
-                    <td>Web Developer</td>
-                  </tr>
-                  <tr>
-                    <td>Skill</td>
-                    <td>:</td>
-                    <td>PHP, HTML, CSS, Java</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+  if (data.emailVerified) {
+    if (data2) {
+      return (
+        <>
+          <div>
+            <NavTop title={location.state}/>
+            <SideNave data={data2}/>
+            <MainProfile data={data2} uid={data.uid} checkEdit={setCheckEdit}/>
           </div>
-          <h2>SOCIAL MEDIA</h2>
-          <div className="card">
-            <div className="card-body">
-              <i className="fa fa-pen fa-xs edit"></i>
-              <div className="social-media">
-                <span className="fa-stack fa-sm">
-                  <i className="fas fa-circle fa-stack-2x"></i>
-                  <i className="fab fa-facebook fa-stack-1x fa-inverse"></i>
-                </span>
-                <span className="fa-stack fa-sm">
-                  <i className="fas fa-circle fa-stack-2x"></i>
-                  <i className="fab fa-twitter fa-stack-1x fa-inverse"></i>
-                </span>
-                <span className="fa-stack fa-sm">
-                  <i className="fas fa-circle fa-stack-2x"></i>
-                  <i className="fab fa-instagram fa-stack-1x fa-inverse"></i>
-                </span>
-                <span className="fa-stack fa-sm">
-                  <i className="fas fa-circle fa-stack-2x"></i>
-                  <i className="fab fa-invision fa-stack-1x fa-inverse"></i>
-                </span>
-                <span className="fa-stack fa-sm">
-                  <i className="fas fa-circle fa-stack-2x"></i>
-                  <i className="fab fa-github fa-stack-1x fa-inverse"></i>
-                </span>
-                <span className="fa-stack fa-sm">
-                  <i className="fas fa-circle fa-stack-2x"></i>
-                  <i className="fab fa-whatsapp fa-stack-1x fa-inverse"></i>
-                </span>
-                <span className="fa-stack fa-sm">
-                  <i className="fas fa-circle fa-stack-2x"></i>
-                  <i className="fab fa-snapchat fa-stack-1x fa-inverse"></i>
-                </span>
-              </div>
-            </div>
+        </>
+      )
+    }
+  } else{
+    return (
+      <>
+        <div>
+          <NavTop title={location.state}/>
+          <SideNave />
+          <div className="main">
+            <h1>Bạn chưa xác thực Email của chúng tôi.</h1>
+            <h2>Vui lòng xác thực email.</h2>
           </div>
         </div>
+      </>
+    )
+  }
 
-      </div>
-    </>
-  )
 }
 
 export default ProFileUser
