@@ -34,10 +34,8 @@ function ProFileUser() {
 
         const docRef = doc(db, "Users", uid);
         const docSnap = await getDoc(docRef);
-        // console.log(docSnap.data())
         setData2(docSnap.data())
       } else {
-        // alert("Bạn chưa đăng nhập!!!")
         window.location = `${import.meta.env.VITE_LOCAL_URL}`
       }
     })

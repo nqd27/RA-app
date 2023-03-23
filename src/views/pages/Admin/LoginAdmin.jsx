@@ -7,13 +7,18 @@ import { Eggy } from '@s-r0/eggy-js';
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { async } from '@firebase/util'
+import { useNavigate } from 'react-router-dom'
+// import login from '../../../assets/images/pikachu.png'
 
 const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
 const db = getFirestore(app)
 
 
-const LoginAdmin = () => {
+const LoginAdmin = (props) => {
+    const navigate = useNavigate()
+    const { hide } = props;
+    console.log(hide)
     const arrVaiTro = ['ADMIN', 'QTV'];
 
     useEffect(() => {
@@ -22,19 +27,24 @@ const LoginAdmin = () => {
                 const refUser = doc(db, "Users", user.uid)
                 const data = await getDoc(refUser)
                 const check = arrVaiTro.includes(data.data().vaitro);
-                // console.log(check)
+                console.log(check)
 
-                if(check){
-                    setTimeout(() => {
-                        window.location = `${import.meta.env.VITE_LOCAL_URL}admin/main`
-                    }, 2000);
-                }else{
-                    setTimeout(() => {
-                        window.location = `${import.meta.env.VITE_LOCAL_URL}`
-                    }, 2000);
+                if (check) {
+                        navigate('../main')
                 }
+
+                // auth.signOut()
             }
         })
+
+        if(hide){
+            let navTop = document.querySelector('.nav-top');
+            let sideNav = document.querySelector('.side-nav');
+            let main = document.querySelector('.container-admin');
+            navTop.style.display = 'none';
+            sideNav.style.display = 'none';
+            // main.style.display = 'none';
+        }
     }, [])
 
     const signUpAdmin = async () => {
@@ -58,9 +68,7 @@ const LoginAdmin = () => {
                     const data = await getDoc(refUser)
 
                     if (data) {
-                        // console.log(data.data().vaitro)
                         const check = arrVaiTro.includes(data.data().vaitro);
-                        // console.log(check)
 
                         if (check) {
                             await Eggy({
@@ -69,9 +77,7 @@ const LoginAdmin = () => {
                                 type: 'success',
                                 duration: 1000
                             })
-                            setTimeout(() => {
-                                window.location = `${import.meta.env.VITE_LOCAL_URL}admin/main`
-                            }, 2000);
+                                navigate('../main')
                         } else {
                             await Eggy({
                                 title: 'Sign in',
@@ -99,31 +105,33 @@ const LoginAdmin = () => {
     }
 
     return (
-        <div className="contaier-login">
-            <div className="main-login-admin">
-                <div className="left-login">
-                    <form>
-                        <h1>LOGIN</h1>
-                        <div className="control">
-                            <label htmlFor="email">Email</label>
-                            <input type="email" id='email' />
-                        </div>
+        <>
+            <div className="contaier-login">
+                <div className="main-login-admin">
+                    <div className="left-login">
+                        <form>
+                            <h1>LOGIN</h1>
+                            <div className="control">
+                                <label htmlFor="email">Email</label>
+                                <input type="email" id='email' />
+                            </div>
 
-                        <div className="control">
-                            <label htmlFor="password">Password</label>
-                            <input type="password" id='password' />
-                        </div>
+                            <div className="control">
+                                <label htmlFor="password">Password</label>
+                                <input type="password" id='password' />
+                            </div>
 
-                        <div className="btn-login-admin">
-                            <button type='button' className='btn btn-primary btn-login' onClick={signUpAdmin}>Login</button>
-                        </div>
-                    </form>
-                </div>
-                <div className="right-login">
-                    <img src="./src/assets/images/pikachu.png" alt="" />
+                            <div className="btn-login-admin">
+                                <button type='button' className='btn btn-primary btn-login' onClick={signUpAdmin}>Login</button>
+                            </div>
+                        </form>
+                    </div>
+                    {/* <div className="right-login">
+                        <img src={login} alt="" />
+                    </div> */}
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 

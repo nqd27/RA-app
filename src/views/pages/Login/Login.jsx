@@ -66,7 +66,7 @@ function Login() {
 
     return (
         <>
-            <Header />
+            {/* <Header /> */}
             {
                 !loginC?
                 <main className="main">
@@ -130,7 +130,7 @@ function Login() {
                   </>
             }
             
-            <Footer />
+            {/* <Footer /> */}
         </>
     )
 }

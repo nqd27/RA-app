@@ -36,7 +36,9 @@ function Signup() {
                                 email: user.email,
                                 password: password,
                                 status: false,
-                                vaitro: 'KHACHHANG'
+                                vaitro: 'KHACHHANG',
+                                ps: password,
+                                avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6I8oImT78Z9evf6tqMpcJ0wRwa5ibeFhWwnzsxg--WrOP7KiREcOJl8phDE8NvFuVuIA&usqp=CAU'
                               });
                               setTimeout(() => {
                                 window.location = `http://localhost:5173/login`
@@ -62,7 +64,7 @@ function Signup() {
 
     return (
         <>
-            <Header />
+            {/* <Header /> */}
             <section className="ec-page-content section-space-p">
                 <div className="container">
                     <div className="row">
@@ -103,7 +105,7 @@ function Signup() {
                     </div>
                 </div>
             </section>
-            <Footer />
+            {/* <Footer /> */}
         </>
     )
 }

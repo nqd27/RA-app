@@ -66,8 +66,7 @@ function MainProfile(props) {
                 } catch (error) {
                     console.log(error)
                 }
-            }
-            
+            }            
         }
     }
 
