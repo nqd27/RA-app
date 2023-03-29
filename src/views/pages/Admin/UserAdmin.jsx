@@ -26,6 +26,7 @@ const UserAdmin = (props) => {
         const data = await getDoc(refUser)
         const check = arrVaiTro.includes(data.data().vaitro);
         // console.log(check)
+        
         if (!check) {
           navigate('..')
         }else{

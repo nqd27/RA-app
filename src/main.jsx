@@ -14,6 +14,11 @@ import MainHome from './views/pages/Home/MainHome'
 import MainLayOut from './views/pages/Admin/Layout/MainLayOut'
 import UserAdmin from './views/pages/Admin/UserAdmin'
 import EditUserAdmin from './views/pages/Admin/EditUserAdmin'
+import ProductAdmin from './views/pages/Admin/ProductAdmin'
+import AddProduct from './views/pages/Admin/AddProduct'
+// import '../src/assets/css/demo5.css'
+// import './assets/css/plugins/bootstrap.css'
+import Storage from './views/pages/storage/Storage'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -35,6 +40,15 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path='main' element={<MainAdmin title={'WELLCOME TO ADMIN PAGES'} />} />
           <Route path='user' element={<UserAdmin title={'PROFILES USER'} />}/>
           <Route path='user/:userId' element={<EditUserAdmin title={'EDIT USER'}/>} />
+          <Route path='product'>
+              <Route index element={<Navigate to='main' />}/>
+              <Route path='main' element={<ProductAdmin title={'EDIT PRODUCT'}/>} />
+              <Route path='*' element={<ProductAdmin title={'EDIT PRODUCT'}/>} />
+              <Route path='add' element={<AddProduct title={'ADD PRODUCT'}/>}/>
+          </Route>
+        </Route>
+        <Route path='/store' element={<Storage/>}>
+
         </Route>
       </Routes>
     </BrowserRouter>

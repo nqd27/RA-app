@@ -1,5 +1,5 @@
 import React from 'react'
-
+import Slider from '../../components/Slider'
 function MainHome() {
 
     const styleUuDai = {
@@ -23,6 +23,7 @@ function MainHome() {
 
     return (
         <>
+        <Slider/>
             <section className="section ec-category-section section-space-mb">
                 <div className="container">
                     <div className="row">
