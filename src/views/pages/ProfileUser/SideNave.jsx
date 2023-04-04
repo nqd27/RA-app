@@ -34,7 +34,7 @@ function SideNave(props) {
                 </div>
                 
                 <div className="url">
-                    <Link to='/profile/cart' state={"Đơn hàng của bạn"}>Đơn hàng</Link>
+                    <Link to='/profile/cart' state={""}>Đơn hàng</Link>
                     <hr align="center"/>
                 </div>
             </div>

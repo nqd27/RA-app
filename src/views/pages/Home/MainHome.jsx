@@ -1,6 +1,91 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Slider from '../../components/Slider'
+import { firebaseConfig } from '../../../firebase/config'
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, getDocs, getDoc, query, where, limit, setDoc, doc } from "firebase/firestore";
+import { Link } from 'react-router-dom';
+import currency from 'currency.js'
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { stringify } from 'uuid';
+import { useSelector, useDispatch } from 'react-redux';
+import cartSlice from '../../store/sclice/cartSlice';
+import { getCart } from '../../store/selectors/cartSelector';
+
+const app = initializeApp(firebaseConfig)
+const db = getFirestore(app)
+const auth = getAuth(app)
+
 function MainHome() {
+    const [product1, setProduct1] = useState([])
+    const dispatch = useDispatch()
+    const cart = useSelector(getCart)
+    // console.log(cart)
+    useEffect(
+        () => {
+            getProduct()
+            // product1 = getProduct()
+        }, []
+    )
+
+    
+    // console.log(product1)
+
+    const getProduct = async () => {
+        let q = query(collection(db, "Product"), where("LIST", "==", "SẢN PHẨM NỔI BẬT"), limit(4))
+        let data = await getDocs(q)
+        let arrProductNB = []
+        data.forEach(item => {
+            arrProductNB.push(item.data())
+        })
+        setProduct1(arrProductNB)
+    }
+
+    const addCartMini = (data) => {
+        const { uid, url, name, price } = data
+        // console.log(uid, url, name, price)
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+
+                // console.log(user.uid)
+                let dtUser = await (await getDoc(doc(db,'Users', user.uid))).data()
+
+
+                let data = {
+                    uid: uid,
+                    quantity: 1,
+                    url: url,
+                    name: name,
+                    price: price
+                }
+
+                // console.log(data)
+                dispatch(cartSlice.actions.setCartList({ uid, data }))
+                
+                let checkMiniCart = false
+
+                dtUser.miniCart.forEach((item,index) => {
+                    if(item.uid == uid){
+                        checkMiniCart = true
+                        item.quantity = item.quantity + 1
+                    }
+                })
+
+                if(!checkMiniCart){
+                    dtUser.miniCart.push(data)
+                }
+                // console.log(dtUser)
+                await setDoc(doc(db,'Users', user.uid),dtUser)
+
+            } else {
+                console.log("Chưa đăng nhập")
+            }
+        })
+    }
+
+    const callCart = () => {
+        return useSelector(getCart)
+    }
 
     const styleUuDai = {
         box: {
@@ -23,7 +108,7 @@ function MainHome() {
 
     return (
         <>
-        <Slider/>
+            <Slider />
             <section className="section ec-category-section section-space-mb">
                 <div className="container">
                     <div className="row">
@@ -133,8 +218,91 @@ function MainHome() {
                     <div className="row m-tb-minus-15">
                         <div className="col">
                             <div className="tab-content">
-                                <div className="row">
-                                    <div className="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
+                                <div className="row" id='product-noibat'>
+                                    {
+                                        product1.map((item, index) => {
+                                            return (
+                                                <>
+                                                    <div className="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content" key={item.uid}>
+                                                        <div className="ec-product-inner">
+                                                            <div className="ec-product-hover"></div>
+                                                            <div className="ec-pro-image-outer">
+                                                                <div className="ec-pro-image">
+                                                                    <a href="product-gallery-full-width.html" className="image">
+                                                                        <img className="main-image" src={item.images[0]} style={{
+                                                                            height: '288px',
+                                                                            width: '288px'
+                                                                        }}
+                                                                            alt="Product" />
+                                                                        <img className="hover-image" src={item.images[0]} style={{
+                                                                            height: '288px',
+                                                                            width: '288px'
+                                                                        }}
+                                                                            alt="Product" />
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                            <div className="ec-pro-content">
+                                                                <div className="ec-pro-option">
+                                                                    <div className="ec-pro-opt-inner">
+                                                                        <div className="ec-pro-color">
+                                                                            <ul className="ec-opt-swatch ec-change-img">
+                                                                                <li className="active"><a href="#" className="ec-opt-clr-img"
+                                                                                    data-src="./src/assets/images/product-image/39_1.jpg"
+                                                                                    data-src-hover="./src/assets/images/product-image/39_2.jpg"
+                                                                                    data-tooltip="Gray"><span
+                                                                                    ></span></a></li>
+                                                                            </ul>
+                                                                        </div>
+                                                                        <div className="ec-pro-compare">
+                                                                            <a href="compare.html" className="ec-btn-group compare"
+                                                                                title="Compare"><img src="./src/assets/images/icons/compare_5.svg"
+                                                                                    className="svg_img pro_svg" alt="" /></a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <h5 className="ec-pro-title"><Link to={`/product/${item.uid}`}>{item.name}</Link></h5>
+                                                                <h6 className="ec-pro-stitle"><a href="shop-left-sidebar-col-3.html">{item.categories}</a></h6>
+                                                                <div className="ec-pro-rat-price">
+                                                                    <div className="ec-pro-rat-pri-inner">
+                                                                        <span className="ec-price">
+                                                                            <span className="new-price">{currency(item.price, { symbol: '', separator: '.', decimal: ',', fromCents: true, precision: 0 }).format()} VND</span>
+                                                                            {/* <span className="old-price">$200.00</span> */}
+                                                                        </span>
+                                                                        <span className="ec-pro-rating">
+                                                                            <i className="ecicon eci-star fill"></i>
+                                                                            <i className="ecicon eci-star fill"></i>
+                                                                            <i className="ecicon eci-star fill"></i>
+                                                                            <i className="ecicon eci-star-o"></i>
+                                                                            <i className="ecicon eci-star-o"></i>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="pro-hidden-block">
+
+                                                                    <div className="ec-pro-desc">{item.description}</div>
+                                                                    <div className="ec-pro-actions">
+                                                                        <a className="ec-btn-group wishlist" title="Wishlist"><img
+                                                                            src="./src/assets/images/icons/pro_wishlist.svg"
+                                                                            className="svg_img pro_svg" alt="" /></a>
+                                                                        <button title="Add To Cart" className="btn btn-primary" onClick={() => {
+                                                                            addCartMini({ uid: item.uid, url: item.images[0], name: item.name, price: item.price })
+                                                                        }}>Thêm vào giỏ</button>
+                                                                        <a href="#" className="ec-btn-group quickview" data-link-action="quickview"
+                                                                            title="Quick view" data-bs-toggle="modal"
+                                                                            data-bs-target="#ec_quickview_modal"><img
+                                                                                src="./src/assets/images/icons/quickview.svg" className="svg_img pro_svg"
+                                                                                alt="" /></a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            )
+                                        })
+                                    }
+                                    {/* <div className="col-lg-3 col-md-6 col-sm-6 col-xs-6 ec-product-content">
                                         <div className="ec-product-inner">
                                             <div className="ec-product-hover"></div>
                                             <div className="ec-pro-image-outer">
@@ -696,7 +864,7 @@ function MainHome() {
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
                         </div>
@@ -1643,7 +1811,7 @@ function MainHome() {
                     </div>
                 </div>
             </section>
-            
+
             <section className="section ec-services-section">
                 <h2 className="d-none">Dịch vụ</h2>
                 <div className="container">

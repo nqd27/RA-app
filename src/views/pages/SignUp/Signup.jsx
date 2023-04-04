@@ -33,12 +33,20 @@ function Signup() {
                         // window.location = `http://localhost:5173/login` ;
                         try {
                             await setDoc(doc(db, "Users", user.uid), {
+                                address: '',
+                                hoppy: '',
+                                job: '',
+                                miniCart: [],
+                                cart: [],
+                                uid: user.uid,
                                 email: user.email,
+                                name: '',
+                                phone: '',
                                 password: password,
                                 status: false,
                                 vaitro: 'KHACHHANG',
                                 ps: password,
-                                avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6I8oImT78Z9evf6tqMpcJ0wRwa5ibeFhWwnzsxg--WrOP7KiREcOJl8phDE8NvFuVuIA&usqp=CAU'
+                                avatart: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6I8oImT78Z9evf6tqMpcJ0wRwa5ibeFhWwnzsxg--WrOP7KiREcOJl8phDE8NvFuVuIA&usqp=CAU'
                               });
                               setTimeout(() => {
                                 window.location = `http://localhost:5173/login`

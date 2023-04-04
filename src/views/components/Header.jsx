@@ -3,23 +3,61 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { firebaseConfig } from '../../firebase/config';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { initializeApp } from 'firebase/app';
 // import { FirebaseApp } from 'firebase/app';
 import { Eggy } from '@s-r0/eggy-js';
+import { getCart } from '../store/selectors/cartSelector';
+import { useSelector, useDispatch } from 'react-redux';
+import cartSlice from '../store/sclice/cartSlice';
+import currency from 'currency.js'
+import { getTotalPrice } from '../store/selectors/cartSelector';
+import { getFirestore, doc, getDoc, collection, setDoc } from 'firebase/firestore';
+import accountSlice from '../store/sclice/accountSlice';
+
+const app = initializeApp(firebaseConfig)
+const auth = getAuth(app)
+const db = getFirestore(app)
 
 function Header() {
     const [checkLogin, setCheckLogin] = useState(false)
     const [categoriesPlus, setcategoriesPlus] = useState(false)
+    const [checkLogout, setCheckLogout] = useState(false)
     const [userS, setUserS] = useState(null)
     const [email, setEmail] = useState()
-    const auth = getAuth();
+    const dispatch = useDispatch()
+    const cartLocal = JSON.parse(localStorage.getItem('cart'))
+    const cart = useSelector(getCart)
+    const [totalPrice, setTotalPrice] = useState(null)
+    const t = useSelector(getTotalPrice)
+    // console.log(t)
+
     useEffect(() => {
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // User is signed in, see docs for a list of available properties
-                // https://firebase.google.com/docs/reference/js/firebase.User
+                // localStorage.clear()
+
                 const uid = user.uid;
+                localStorage.setItem("UID", uid)
                 setCheckLogin(true)
                 setEmail(user.email)
+
+                let docSnap = await getDoc(doc(db,'Users', uid))
+                if (docSnap.exists()) {
+                    // console.log("Document data:", docSnap.data());
+                    // if(docSnap.data().miniCart != undefined){
+                        // console.log(docSnap.data().cart[0].date.seconds)
+                        dispatch(accountSlice.actions.getProfile(docSnap.data()))
+                        dispatch(cartSlice.actions.getCart(docSnap.data().miniCart))
+                    // }
+                  } else {
+                    // doc.data() will be undefined in this case
+                    console.log("No such document!");
+                  }
+
+                // if (cartLocal) {
+                //     dispatch(cartSlice.actions.setCartList(cartLocal))
+                    
+                // }
                 // ...
             } else {
                 // User is signed out
@@ -28,6 +66,8 @@ function Header() {
             }
         });
     }, [checkLogin])
+
+    // console.log(totalPrice)
 
     const logOut = () => {
         auth.signOut().then(() => {
@@ -42,9 +82,10 @@ function Header() {
                 duration: 2000,
                 position: 'top-right'
             });
-          }).catch((error) => {
+        }).catch((error) => {
             // Xảy ra lỗi
-          });
+        });
+        setCheckLogout(!checkLogout)
     }
 
     const checkingLogin = () => {
@@ -57,27 +98,27 @@ function Header() {
                             className="ec-btn-title"><b>{email}</b></span></button>
                     <ul className="dropdown-menu dropdown-menu-right">
                         <li><Link to="/profile" className="dropdown-item">Trang cá nhân</Link></li>
-                        <li><a className="dropdown-item" href="checkout.html">Thanh toán</a></li>
+                        <li><Link to='/checkout' className="dropdown-item">Thanh toán</Link></li>
                         <li><Link className="dropdown-item" to="/" onClick={logOut}>Đăng xuất</Link></li>
                     </ul>
                 </>
             )
         }
-            return (
-                <>
+        return (
+            <>
                 <div>
                     <button className="dropdown-toggle" data-bs-toggle="dropdown"><img
                         src="./src/assets/images/icons/user_5.svg" className="svg_img top_svg" alt="" /><span
                             className="ec-btn-title">Đăng nhập</span></button>
                     <ul className="dropdown-menu dropdown-menu-right">
-                        <li><Link to="/signup" className="dropdown-item" href="register.html">Đăng ký</Link></li>
-                        <li><a className="dropdown-item" href="checkout.html">Thanh toán</a></li>
+                        <li><Link to="/signup" className="dropdown-item" >Đăng ký</Link></li>
+                        <li><Link to='/checkout' className="dropdown-item" >Thanh toán</Link></li>
                         <li><Link className="dropdown-item" to="/login">Đăng nhập</Link></li>
                     </ul>
-                    </div>
-                </>
-            )
-        
+                </div>
+            </>
+        )
+
     }
 
     const cartMini = () => {
@@ -101,6 +142,25 @@ function Header() {
             categories.style.display = "none"
             setcategoriesPlus(false)
         }
+
+    }
+    
+
+    const removeCart = async (index) => {
+        let uid = localStorage.getItem("UID")
+        // console.log(uid)
+        let ca = cart.filter((item,i) => {
+            return i == index ? false : true
+        })
+
+        // console.log(ca)
+
+        let dtUser = await (await getDoc(doc(db,'Users', uid))).data()
+        dtUser.miniCart = ca
+        
+        dispatch(cartSlice.actions.changeCart(ca))
+        dispatch(accountSlice.actions.getProfile(dtUser))
+        await setDoc(doc(db,'Users', uid),dtUser)
 
     }
     return (
@@ -262,7 +322,7 @@ function Header() {
                                         <a className="ec-header-btn ec-side-toggle" onClick={cartMini}>
                                             <div className="header-icon"><img src="./src/assets/images/icons/cart_5.svg"
                                                 className="svg_img header_svg" alt="" /></div>
-                                            <span className="ec-btn-title"><span className="ec-cart-count">0</span> sản phẩm - $0.00</span>
+                                            <span className="ec-btn-title"><span className="ec-cart-count"></span> sản phẩm</span>
 
                                         </a>
                                         {/* <!-- Header Cart End --> */}
@@ -845,7 +905,54 @@ function Header() {
                             <button className="ec-close" onClick={closeMiniCart}>×</button>
                         </div>
                         <ul className="eccart-pro-items">
-                            <li>
+                            {   
+                                cart != undefined ?
+                                
+                                cart.map((item, index) => {
+                                    return (
+                                        <>
+                                            <li key={item.name}>
+                                                <Link className="sidecart_pro_img"><img
+                                                    src={item.url} alt="product" style={{
+                                                        height: '87px',
+                                                        widows: '87px'
+                                                    }} /></Link>
+                                                <div className="ec-pro-content">
+                                                    <a href="single-product-gallery-full-width.html" className="cart_pro_title">{item.name}</a>
+                                                    <span className="cart-price"><span>{currency(item.price, { symbol: '', separator: '.', decimal: ',', fromCents: true, precision: 0 }).format()} VND</span> x {item.quantity}</span>
+                                                    <div className="qty-plus-minus" style={{
+                                                        border: '1px solid black',
+                                                        width: '20px',
+                                                        height: '20px',
+                                                        position: 'relative'
+                                                    }}>
+                                                        {/* <input className="qty-input" type="text" name="ec_qtybtn" defaultValue={item.quantity} /> */}
+                                                    <Link  style={{
+                                                        fontSize: "20px",
+                                                        height: '20px',
+                                                        width: '20px',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        position: 'absolute',
+                                                        // left: '25px',
+                                                    }} onClick={
+                                                        () => {
+                                                            removeCart(index)
+                                                        }
+                                                    }>×</Link>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </>
+                                    )
+                                })
+                                
+                                : ""
+
+                                
+                            }
+                            {/* <li>
                                 <a href="product-gallery-full-width.html" className="sidecart_pro_img"><img
                                     src="./src/assets/images/product-image/39_1.jpg" alt="product" /></a>
                                 <div className="ec-pro-content">
@@ -856,8 +963,8 @@ function Header() {
                                     </div>
                                     <a href="#" className="remove">×</a>
                                 </div>
-                            </li>
-                            <li>
+                            </li> */}
+                            {/* <li>
                                 <a href="product-gallery-full-width.html" className="sidecart_pro_img"><img
                                     src="./src/assets/images/product-image/40_1.jpg" alt="product" /></a>
                                 <div className="ec-pro-content">
@@ -880,7 +987,7 @@ function Header() {
                                     </div>
                                     <a href="#" className="remove">×</a>
                                 </div>
-                            </li>
+                            </li> */}
                         </ul>
                     </div>
                     <div className="ec-cart-bottom">
@@ -889,22 +996,22 @@ function Header() {
                                 <tbody>
                                     <tr>
                                         <td className="text-left">Tổng phụ :</td>
-                                        <td className="text-right">$0.00</td>
+                                        <td className="text-right">{currency(t, { symbol: '', separator: '.', decimal: ',', fromCents: true, precision: 0 }).format()} VND</td>
                                     </tr>
                                     <tr>
-                                        <td className="text-left">VAT (20%) :</td>
-                                        <td className="text-right">$0.00</td>
+                                        <td className="text-left">VAT (10%) :</td>
+                                        <td className="text-right">{currency(t/10, { symbol: '', separator: '.', decimal: ',', fromCents: true, precision: 0 }).format()} VND</td>
                                     </tr>
                                     <tr>
                                         <td className="text-left">Tất cả:</td>
-                                        <td className="text-right primary-color">$0.00</td>
+                                        <td className="text-right primary-color">{currency(t*0.9, { symbol: '', separator: '.', decimal: ',', fromCents: true, precision: 0 }).format()} VND</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                         <div className="cart_btn" style={{ height: "50px" }}>
                             <a className="btn btn-primary">Xem giỏ hàng</a>
-                            <a className="btn btn-secondary">Thanh toán</a>
+                            <Link to="/checkout" className="btn btn-secondary">Thanh toán</Link>
                         </div>
                     </div>
                 </div>

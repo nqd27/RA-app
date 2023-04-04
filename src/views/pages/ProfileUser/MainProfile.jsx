@@ -3,14 +3,21 @@ import { Eggy } from '@s-r0/eggy-js';
 import { firebaseConfig } from '../../../firebase/config';
 import { getFirestore, collection, doc, setDoc, getDoc } from "firebase/firestore";
 import { initializeApp } from 'firebase/app'
+import { useSelector, useDispatch } from 'react-redux';
+import accountSlice from '../../store/sclice/accountSlice';
+import { getProfile } from '../../store/selectors/accountSelector';
 
 const app = initializeApp(firebaseConfig)
 const db = getFirestore(app)
 
 function MainProfile(props) {
+    const dispatch = useDispatch()
     const { data, uid, checkEdit } = props
     // console.log(checkEdit)
     const [checkUpdate, setCheckUpdate] = useState(false);
+    const dataA = useSelector(getProfile)
+
+    // console.log(dataA)
     // console.log(data)
     // console.log(uid)
 
@@ -48,9 +55,28 @@ function MainProfile(props) {
                     phone: phone,
                     vaitro: data.vaitro
                 }
-    
+
+                let dtud = {
+                    address: address,
+                    hoppy: hoppy,
+                    job: job,
+                    miniCart: dataA.miniCart,
+                    cart: dataA.cart,
+                    uid: dataA.uid,
+                    email: email,
+                    name: name,
+                    phone: phone,
+                    password: dataA.ps,
+                    status: true,
+                    vaitro: dataA.vaitro,
+                    ps: dataA.ps,
+                    avatart: dataA.avatart
+                  }
+                  
+                  console.log(dtud)
                 try {
-                    await setDoc(doc(db, "Users", uid), dataUpdate);
+                    dispatch(accountSlice.actions.getProfile(dtud))
+                    await setDoc(doc(db, "Users", uid), dtud);
                     Eggy({
                         title: 'Success',
                         message: `Cập nhật thông tin thành công!`,
@@ -96,32 +122,32 @@ function MainProfile(props) {
                                 <tr>
                                     <td>Họ và tên: </td>
                                     <td>:</td>
-                                    <td id='valueD'>{data.name}</td>
+                                    <td id='valueD'>{dataA.name}</td>
                                 </tr>
                                 <tr>
                                     <td>Email</td>
                                     <td>:</td>
-                                    <td id='valueD'>{data.email}</td>
+                                    <td id='valueD'>{dataA.email}</td>
                                 </tr>
                                 <tr>
                                     <td>Địa chỉ</td>
                                     <td>:</td>
-                                    <td id='valueD'>{data.address}</td>
+                                    <td id='valueD'>{dataA.address}</td>
                                 </tr>
                                 <tr>
                                     <td>Sở thích</td>
                                     <td>:</td>
-                                    <td id='valueD'>{data.hoppy}</td>
+                                    <td id='valueD'>{dataA.hoppy}</td>
                                 </tr>
                                 <tr>
                                     <td>Nghề nghiệp</td>
                                     <td>:</td>
-                                    <td id='valueD'>{data.job}</td>
+                                    <td id='valueD'>{dataA.job}</td>
                                 </tr>
                                 <tr>
                                     <td>Số điện thoại</td>
                                     <td>:</td>
-                                    <td id='valueD'>{data.phone}</td>
+                                    <td id='valueD'>{dataA.phone}</td>
                                 </tr>
                             </tbody>
 
@@ -139,32 +165,32 @@ function MainProfile(props) {
                                 <tr>
                                     <td>Họ và tên: </td>
                                     <td>:</td>
-                                    <td><input type="text" id='name' defaultValue={data.name} /></td>
+                                    <td><input type="text" id='name' defaultValue={dataA.name} /></td>
                                 </tr>
                                 <tr>
                                     <td>Email</td>
                                     <td>:</td>
-                                    <td><input type="text" id='email' defaultValue={data.email} /></td>
+                                    <td><input type="text" id='email' defaultValue={dataA.email} /></td>
                                 </tr>
                                 <tr>
                                     <td>Địa chỉ</td>
                                     <td>:</td>
-                                    <td><input type="text" id='address' defaultValue={data.address} /></td>
+                                    <td><input type="text" id='address' defaultValue={dataA.address} /></td>
                                 </tr>
                                 <tr>
                                     <td>Sở thích</td>
                                     <td>:</td>
-                                    <td><input type="text" id='hoppy' defaultValue={data.hoppy} /></td>
+                                    <td><input type="text" id='hoppy' defaultValue={dataA.hoppy} /></td>
                                 </tr>
                                 <tr>
                                     <td>Nghề nghiệp</td>
                                     <td>:</td>
-                                    <td><input type="text" id='job' defaultValue={data.job} /></td>
+                                    <td><input type="text" id='job' defaultValue={dataA.job} /></td>
                                 </tr>
                                 <tr>
                                     <td>Số điện thoại</td>
                                     <td>:</td>
-                                    <td><input type="text" id='phone' defaultValue={data.phone} /></td>
+                                    <td><input type="text" id='phone' defaultValue={dataA.phone} /></td>
                                 </tr>
                             </tbody>
 

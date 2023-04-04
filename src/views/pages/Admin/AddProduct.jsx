@@ -89,36 +89,6 @@ const AddProduct = (props) => {
 
             <div className="render-data">
                 <div className="form-add">
-                    {/* <div className="form-add-product">
-                        <div className="form-control-product">
-                            <label htmlFor="name">Tên sản phẩm</label>
-                            <input type="text" />
-                        </div>
-                    </div>
-                    <div className="form-add-product">
-                        <div className="form-control-product">
-                            <label htmlFor="price">Giá sản phẩm</label>
-                            <input type="text" id='price'/>
-                        </div>
-                    </div>
-                    <div className="form-add-product">
-                        <div className="form-control-product">
-                            <label htmlFor="categories">Thể loại</label>
-                            <input type="text" id='categories'/>
-                        </div>
-                    </div>
-                    <div className="form-add-product">
-                        <div className="form-control-product">
-                            <label htmlFor="image">Image</label>
-                            <input type="file" id='image'/>
-                        </div>
-                    </div>
-                    <div className="form-add-product">
-                        <div className="form-control-product">
-                            <label htmlFor="description">Mô tả: </label>
-                            <textarea  id='description' d/>
-                        </div>
-                    </div> */}
                     <Form.Group className="mb-3" controlId="name">
                         <Form.Label>Tên sản phẩm</Form.Label>
                         <Form.Control type="text" />

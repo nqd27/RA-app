@@ -518,7 +518,61 @@
                             // }
                         }
 
-                        
+                        .form-edit-product{
+                            height: 700px;
+                            width: 100%;
+                            // background-color: aquamarine;
+                            display: flex;
+                            flex-direction: row;
+                            align-items: center;
+                            justify-content: center;
+
+                            .left-box{
+                                height: 90%;
+                                width: 40%;
+                                // margin: 2.5% 5% 0% 2.5%;
+                                // background-color: blueviolet;
+                                
+                                .img{
+                                    // margin: 0% 0% 0% 5%;
+                                    margin-left: 5%;
+                                    height: 100%;
+                                    width: 90%;
+                                    border-radius: 20px;
+                                    overflow: hidden;
+
+                                    img{
+                                        height: 100%;
+                                        width: 100%;
+                                    }
+                                }
+
+                                .changeImg{
+                                    height: 10%;
+                                    width: 90%;
+                                    // margin-left: 5%;
+                                    // background-color: aquamarine;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    
+                                }
+                            }
+
+                            .right-box{
+                                // padding-top: 1%;
+                                height: 90%;
+                                width: 60%;
+                                margin-left: -5%;
+
+                                label{
+                                    font-size: 20px;
+                                    font-weight: 400;
+                                }
+                                // margin: 0% 5% 2.5% 5%;
+                                // background-color: burlywood;
+                            }
+                        }
                     }
                 }
 
@@ -703,6 +757,99 @@
                                         }
                                     }
                                 }
+                            }
+                        }
+
+                        .form-add{
+                            height: 100%;
+                            width: 80%;
+                            margin-left: 10%;
+                            display: flex;
+                            flex-direction: column;
+                            // align-items: center;
+                            // justify-content: center;
+
+                            // .form-add-product{
+                            //     height: 100%;
+                            //     width: 100%;
+                            //     padding: 2% 0 2% 20%;
+                            //     // background-color: rgba(127, 255, 212, 0.461);
+                                
+                            //     .form-control-product{
+                            //         height: 10%;
+                            //         width: 50%;
+                                    
+                            //         input{
+                            //             margin-left: 10%;
+                            //             padding-left: 5%;
+                            //             outline: none;
+                            //             border: 0.5px solid rgba(135, 135, 135, 0.353);
+                            //             border-radius: 10px;
+                            //             box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+                            //             transition: all 0.5s;
+    
+                            //             &:focus{
+                            //                 border: 0.5px solid rgba(37, 37, 37, 0.353);
+                            //                 box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+                            //             }
+                            //         }
+                            //     }
+                            // }
+                        }
+
+                        .form-edit-product{
+                            height: 700px;
+                            width: 100%;
+                            // background-color: aquamarine;
+                            display: flex;
+                            flex-direction: row;
+                            align-items: center;
+                            justify-content: center;
+
+                            .left-box{
+                                height: 90%;
+                                width: 40%;
+                                // margin: 2.5% 5% 0% 2.5%;
+                                // background-color: blueviolet;
+                                
+                                .img{
+                                    // margin: 0% 0% 0% 5%;
+                                    margin-left: 5%;
+                                    height: 100%;
+                                    width: 90%;
+                                    border-radius: 20px;
+                                    overflow: hidden;
+
+                                    img{
+                                        height: 100%;
+                                        width: 100%;
+                                    }
+                                }
+
+                                .changeImg{
+                                    height: 10%;
+                                    width: 90%;
+                                    // margin-left: 5%;
+                                    // background-color: aquamarine;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    
+                                }
+                            }
+
+                            .right-box{
+                                // padding-top: 1%;
+                                height: 90%;
+                                width: 60%;
+                                margin-left: -5%;
+
+                                label{
+                                    font-size: 20px;
+                                    font-weight: 400;
+                                }
+                                // margin: 0% 5% 2.5% 5%;
+                                // background-color: burlywood;
                             }
                         }
                     }

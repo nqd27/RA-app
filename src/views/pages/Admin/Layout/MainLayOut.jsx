@@ -5,11 +5,14 @@ import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from 'firebas
 import { useEffect } from 'react'
 import dotenv from 'dotenv'
 import { Link } from 'react-router-dom'
-import { getFirestore, doc, getDoc } from 'firebase/firestore'
+import { getFirestore, doc, getDoc, getDocs, collection, query } from 'firebase/firestore'
 import { Eggy } from '@s-r0/eggy-js';
 import SideNav from './SideNav'
 import NavTop from './NavTop'
 import { Outlet, useNavigate } from 'react-router-dom'
+import adminSlice from '../../../store/sclice/adminSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { list } from 'firebase/storage'
 
 const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
@@ -19,6 +22,9 @@ const MainLayOut = (props) => {
     // console.log(props)
     const arrVaiTro = ['ADMIN', 'QTV'];
     const navigate = useNavigate();
+    const arrDH = []
+    const dispatch = useDispatch()
+    const [arr, setArr] = useState([])
 
     useEffect(() => {
         onAuthStateChanged(auth, async (user) => {
@@ -26,6 +32,10 @@ const MainLayOut = (props) => {
                 const refUser = doc(db, "Users", user.uid)
                 const data = await getDoc(refUser)
                 const check = arrVaiTro.includes(data.data().vaitro);
+                // dispatch(adminSlice.actions.setListUser(arrDH))
+
+                getListUser()
+                // console.log(arrDH)
                 // console.log(check)
                 if (!check) {
                     navigate('..')
@@ -39,9 +49,35 @@ const MainLayOut = (props) => {
                     sideNav.style.display = 'flex';
                     main.style.display = 'flex';
                 }
+
+                // console.log("aasdsad")
             }
         })
     }, [])
+
+    // console.log(arrDH)
+
+    const getListUser = async () => {
+        let q = query(collection(db, "Users"))
+        const querySnapshot = await getDocs(q);
+        let arr = []
+        let listU = []
+        querySnapshot.forEach((doc) => {
+            console.log(doc.id, " => ", doc.data());
+            if(doc.data().cart != undefined){
+                arr.push({
+                    uid: doc.id,
+                    cart: doc.data().cart
+                })
+            }
+            listU.push(doc.data())
+        });
+
+        // console.log(listU)
+
+        dispatch(adminSlice.actions.setListUser(listU))
+        dispatch(adminSlice.actions.setCarts(arr))
+    }
 
 
     return (
@@ -54,7 +90,7 @@ const MainLayOut = (props) => {
                         <div className="wrapper-main-admin">
 
                             <div className="container-main">
-                                
+
                                 <div className="main-page-message">
                                     <Outlet />
                                 </div>

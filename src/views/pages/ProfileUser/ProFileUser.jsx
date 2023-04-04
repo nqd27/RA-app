@@ -10,12 +10,15 @@ import { initializeApp } from 'firebase/app'
 import { getFirestore, doc, getDoc } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
 import MainProfile from './MainProfile'
+import { useDispatch, useSelector } from 'react-redux'
+import accountSlice from '../../store/sclice/accountSlice'
 
 const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
 const db = getFirestore(app)
 
 function ProFileUser() {
+  const dispatch = useDispatch()
   const location = useLocation();
   // console.log(location.state)
   // console.log(sure)
@@ -35,6 +38,7 @@ function ProFileUser() {
         const docRef = doc(db, "Users", uid);
         const docSnap = await getDoc(docRef);
         setData2(docSnap.data())
+        dispatch(accountSlice.actions.getProfile(docSnap.data()))
       } else {
         window.location = `${import.meta.env.VITE_LOCAL_URL}`
       }

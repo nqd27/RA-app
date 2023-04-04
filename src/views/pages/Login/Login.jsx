@@ -46,7 +46,7 @@ function Login() {
 
         let user = await signInWithEmailAndPassword(auth, email, password)
 
-        console.log(user)
+        // console.log(user)
         let data = {
             timeLogin: user.user.metadata.lastSignInTime,
             uid: user.user.uid,

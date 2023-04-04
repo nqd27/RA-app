@@ -139,7 +139,7 @@ const ProductAdmin = (props) => {
                                                         <td>{item.data().price}</td>
                                                         <td>{item.data().categories}</td>
                                                         <td><span className="label label-success">{item.data().description}</span></td>
-                                                        <td ><Link>
+                                                        <td ><Link to={`../edit/${item.data().uid}`}>
                                                             <Button variant="contained" color='primary'>
                                                                 Edit
                                                             </Button>

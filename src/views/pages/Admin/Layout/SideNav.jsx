@@ -62,6 +62,18 @@ const SideNav = () => {
                             </li>
                         </ul>
                     </div>
+                    <div className="route">
+                        <Link className='icon'>
+                            <div>
+                                <CottageIcon />
+                            </div>
+                        </Link>
+                        <ul id='text-link'>
+                            <li>
+                                <Link to='cart'>Đơn hàng</Link>
+                            </li>
+                        </ul>
+                    </div>
                     {/* <div className="route">
                         <Link className="icon">
                             <div >
