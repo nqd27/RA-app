@@ -6,6 +6,7 @@ let adminSlice = createSlice({
   initialState: {
     listUser: [],
     carts: [],
+    Storage: [],
   },
   reducers: {
     setCarts: (state, { payload }) => {
@@ -14,6 +15,20 @@ let adminSlice = createSlice({
 
     setListUser: (state, { payload }) => {
       state.listUser = payload;
+    },
+    setStatusCart: (state, { payload }) => {
+      let { iCs, iC, status } = payload;
+      // console.log(iCs, iC, status);
+      state.carts[iCs].cart[iC].status = status;
+      // console.log(state.carts[iCs].cart[iC].status);
+    },
+    setRoleUser: (state, { payload }) => {
+      let { a, idR } = payload;
+      state.listUser.splice(idR, 1, a);
+    },
+    getStorage: (state, { payload }) => {
+      // console.log(payload);
+      state.Storage = payload;
     },
   },
 });

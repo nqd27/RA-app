@@ -13,6 +13,7 @@ import { Outlet, useNavigate } from 'react-router-dom'
 import adminSlice from '../../../store/sclice/adminSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { list } from 'firebase/storage'
+import { getCarts } from '../../../store/selectors/adminSelector'
 
 const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
@@ -25,6 +26,7 @@ const MainLayOut = (props) => {
     const arrDH = []
     const dispatch = useDispatch()
     const [arr, setArr] = useState([])
+    const carts = useSelector(getCarts)
 
     useEffect(() => {
         onAuthStateChanged(auth, async (user) => {
@@ -34,6 +36,7 @@ const MainLayOut = (props) => {
                 const check = arrVaiTro.includes(data.data().vaitro);
                 // dispatch(adminSlice.actions.setListUser(arrDH))
 
+                getStores()
                 getListUser()
                 // console.log(arrDH)
                 // console.log(check)
@@ -63,7 +66,7 @@ const MainLayOut = (props) => {
         let arr = []
         let listU = []
         querySnapshot.forEach((doc) => {
-            console.log(doc.id, " => ", doc.data());
+            // console.log(doc.id, " => ", doc.data());
             if(doc.data().cart != undefined){
                 arr.push({
                     uid: doc.id,
@@ -77,6 +80,24 @@ const MainLayOut = (props) => {
 
         dispatch(adminSlice.actions.setListUser(listU))
         dispatch(adminSlice.actions.setCarts(arr))
+    }
+
+    const getStores = async () => {
+        let q = query(collection(db, "Stores"))
+        const querySnapshot = await getDocs(q);
+        let arr = []
+        let listS = []
+        let sale = 0
+        let totalStorage = 0
+        querySnapshot.forEach((doc) => {
+            listS.push(
+                {
+                    product: doc.id,
+                    stores: doc.data(),
+                }
+            ) 
+        });
+        dispatch(adminSlice.actions.getStorage(listS))
     }
 
 

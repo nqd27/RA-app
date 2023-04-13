@@ -10,6 +10,8 @@ import { stringify } from 'uuid';
 import { useSelector, useDispatch } from 'react-redux';
 import cartSlice from '../../store/sclice/cartSlice';
 import { getCart } from '../../store/selectors/cartSelector';
+import { Eggy } from '@s-r0/eggy-js';
+import adminSlice from '../../store/sclice/adminSlice';
 
 const app = initializeApp(firebaseConfig)
 const db = getFirestore(app)
@@ -23,9 +25,28 @@ function MainHome() {
     useEffect(
         () => {
             getProduct()
+            getStores()
             // product1 = getProduct()
         }, []
     )
+
+    const getStores = async () => {
+        let q = query(collection(db, "Stores"))
+        const querySnapshot = await getDocs(q);
+        let arr = []
+        let listS = []
+        let sale = 0
+        let totalStorage = 0
+        querySnapshot.forEach((doc) => {
+            listS.push(
+                {
+                    product: doc.id,
+                    stores: doc.data(),
+                }
+            ) 
+        });
+        dispatch(adminSlice.actions.getStorage(listS))
+    }
 
     
     // console.log(product1)
@@ -41,7 +62,7 @@ function MainHome() {
     }
 
     const addCartMini = (data) => {
-        const { uid, url, name, price } = data
+        const { uid, url, name, price, categories } = data
         // console.log(uid, url, name, price)
 
         onAuthStateChanged(auth, async (user) => {
@@ -56,7 +77,8 @@ function MainHome() {
                     quantity: 1,
                     url: url,
                     name: name,
-                    price: price
+                    price: price,
+                    categories: categories
                 }
 
                 // console.log(data)
@@ -76,9 +98,23 @@ function MainHome() {
                 }
                 // console.log(dtUser)
                 await setDoc(doc(db,'Users', user.uid),dtUser)
+                Eggy({
+                    title: ' ',
+                    message: `Thêm giỏ hàng thành công!`,
+                    type: 'success',
+                    duration: 1000,
+                    position: 'top-left'
+                });
 
             } else {
                 console.log("Chưa đăng nhập")
+                // Eggy({
+                //     title: ' ',
+                //     message: `Bạn chưa đăng nhập!`,
+                //     type: 'error',
+                //     position: 'top-left',
+                //     duration: 1000
+                // });
             }
         })
     }
@@ -118,7 +154,7 @@ function MainHome() {
                                     <a href="#">
                                         <h2 className="d-none">Loại</h2>
                                         <div className="ec-cat-image">
-                                            <img src="./src/assets/images/category-image/8.svg" className="svg_img cat_svg" alt="" />
+                                            <img src="/assets/images/category-image/8.svg" className="svg_img cat_svg" alt="" />
                                         </div>
                                         <div className="ec-cat-desc">
                                             <span className="ec-section-title">Laptops & PC</span>
@@ -130,7 +166,7 @@ function MainHome() {
                                 <div className="ec_cat_inner">
                                     <a href="#">
                                         <div className="ec-cat-image">
-                                            <img src="./src/assets/images/category-image/9.svg" className="svg_img cat_svg" alt="" />
+                                            <img src="/assets/images/category-image/9.svg" className="svg_img cat_svg" alt="" />
                                         </div>
                                         <div className="ec-cat-desc">
                                             <span className="ec-section-title">Đồng hồ thông minh</span>
@@ -142,7 +178,7 @@ function MainHome() {
                                 <div className="ec_cat_inner">
                                     <a href="#">
                                         <div className="ec-cat-image">
-                                            <img src="./src/assets/images/category-image/10.svg" className="svg_img cat_svg" alt="" />
+                                            <img src="/assets/images/category-image/10.svg" className="svg_img cat_svg" alt="" />
                                         </div>
                                         <div className="ec-cat-desc">
                                             <span className="ec-section-title">Camera</span>
@@ -154,7 +190,7 @@ function MainHome() {
                                 <div className="ec_cat_inner">
                                     <a href="#">
                                         <div className="ec-cat-image">
-                                            <img src="./src/assets/images/category-image/11.svg" className="svg_img cat_svg" alt="" />
+                                            <img src="/assets/images/category-image/11.svg" className="svg_img cat_svg" alt="" />
                                         </div>
                                         <div className="ec-cat-desc">
                                             <span className="ec-section-title">Tai cầm</span>
@@ -166,7 +202,7 @@ function MainHome() {
                                 <div className="ec_cat_inner">
                                     <a href="#">
                                         <div className="ec-cat-image">
-                                            <img src="./src/assets/images/category-image/12.svg" className="svg_img cat_svg" alt="" />
+                                            <img src="/assets/images/category-image/12.svg" className="svg_img cat_svg" alt="" />
                                         </div>
                                         <div className="ec-cat-desc">
                                             <span className="ec-section-title">Tai nghe</span>
@@ -178,7 +214,7 @@ function MainHome() {
                                 <div className="ec_cat_inner">
                                     <a href="#">
                                         <div className="ec-cat-image">
-                                            <img src="./src/assets/images/category-image/13.svg" className="svg_img cat_svg" alt="" />
+                                            <img src="/assets/images/category-image/13.svg" className="svg_img cat_svg" alt="" />
                                         </div>
                                         <div className="ec-cat-desc">
                                             <span className="ec-section-title">Thực tế ảo</span>
@@ -190,7 +226,7 @@ function MainHome() {
                                 <div className="ec_cat_inner">
                                     <a href="#">
                                         <div className="ec-cat-image">
-                                            <img src="./src/assets/images/category-image/14.svg" className="svg_img cat_svg" alt="" />
+                                            <img src="/assets/images/category-image/14.svg" className="svg_img cat_svg" alt="" />
                                         </div>
                                         <div className="ec-cat-desc">
                                             <span className="ec-section-title">Camera</span>
@@ -248,15 +284,15 @@ function MainHome() {
                                                                         <div className="ec-pro-color">
                                                                             <ul className="ec-opt-swatch ec-change-img">
                                                                                 <li className="active"><a href="#" className="ec-opt-clr-img"
-                                                                                    data-src="./src/assets/images/product-image/39_1.jpg"
-                                                                                    data-src-hover="./src/assets/images/product-image/39_2.jpg"
+                                                                                    data-src="/assets/images/product-image/39_1.jpg"
+                                                                                    data-src-hover="/assets/images/product-image/39_2.jpg"
                                                                                     data-tooltip="Gray"><span
                                                                                     ></span></a></li>
                                                                             </ul>
                                                                         </div>
                                                                         <div className="ec-pro-compare">
                                                                             <a href="compare.html" className="ec-btn-group compare"
-                                                                                title="Compare"><img src="./src/assets/images/icons/compare_5.svg"
+                                                                                title="Compare"><img src="/assets/images/icons/compare_5.svg"
                                                                                     className="svg_img pro_svg" alt="" /></a>
                                                                         </div>
                                                                     </div>
@@ -283,15 +319,15 @@ function MainHome() {
                                                                     <div className="ec-pro-desc">{item.description}</div>
                                                                     <div className="ec-pro-actions">
                                                                         <a className="ec-btn-group wishlist" title="Wishlist"><img
-                                                                            src="./src/assets/images/icons/pro_wishlist.svg"
+                                                                            src="/assets/images/icons/pro_wishlist.svg"
                                                                             className="svg_img pro_svg" alt="" /></a>
                                                                         <button title="Add To Cart" className="btn btn-primary" onClick={() => {
-                                                                            addCartMini({ uid: item.uid, url: item.images[0], name: item.name, price: item.price })
+                                                                            addCartMini({ uid: item.uid, url: item.images[0], name: item.name, price: item.price, categories: item.categories })
                                                                         }}>Thêm vào giỏ</button>
                                                                         <a href="#" className="ec-btn-group quickview" data-link-action="quickview"
                                                                             title="Quick view" data-bs-toggle="modal"
                                                                             data-bs-target="#ec_quickview_modal"><img
-                                                                                src="./src/assets/images/icons/quickview.svg" className="svg_img pro_svg"
+                                                                                src="/assets/images/icons/quickview.svg" className="svg_img pro_svg"
                                                                                 alt="" /></a>
                                                                     </div>
                                                                 </div>
@@ -308,9 +344,9 @@ function MainHome() {
                                             <div className="ec-pro-image-outer">
                                                 <div className="ec-pro-image">
                                                     <a href="product-gallery-full-width.html" className="image">
-                                                        <img className="main-image" src="./src/assets/images/product-image/39_1.jpg"
+                                                        <img className="main-image" src="/assets/images/product-image/39_1.jpg"
                                                             alt="Product" />
-                                                        <img className="hover-image" src="./src/assets/images/product-image/39_2.jpg"
+                                                        <img className="hover-image" src="/assets/images/product-image/39_2.jpg"
                                                             alt="Product" />
                                                     </a>
                                                 </div>
@@ -321,15 +357,15 @@ function MainHome() {
                                                         <div className="ec-pro-color">
                                                             <ul className="ec-opt-swatch ec-change-img">
                                                                 <li className="active"><a href="#" className="ec-opt-clr-img"
-                                                                    data-src="./src/assets/images/product-image/39_1.jpg"
-                                                                    data-src-hover="./src/assets/images/product-image/39_2.jpg"
+                                                                    data-src="/assets/images/product-image/39_1.jpg"
+                                                                    data-src-hover="/assets/images/product-image/39_2.jpg"
                                                                     data-tooltip="Gray"><span
                                                                     ></span></a></li>
                                                             </ul>
                                                         </div>
                                                         <div className="ec-pro-compare">
                                                             <a href="compare.html" className="ec-btn-group compare"
-                                                                title="Compare"><img src="./src/assets/images/icons/compare_5.svg"
+                                                                title="Compare"><img src="/assets/images/icons/compare_5.svg"
                                                                     className="svg_img pro_svg" alt="" /></a>
                                                         </div>
                                                     </div>
@@ -356,13 +392,13 @@ function MainHome() {
                                                     <div className="ec-pro-desc">Lorem Ipsum is simply dummy text of the printing.</div>
                                                     <div className="ec-pro-actions">
                                                         <a className="ec-btn-group wishlist" title="Wishlist"><img
-                                                            src="./src/assets/images/icons/pro_wishlist.svg"
+                                                            src="/assets/images/icons/pro_wishlist.svg"
                                                             className="svg_img pro_svg" alt="" /></a>
                                                         <button title="Add To Cart" className="add-to-cart btn btn-primary">Thêm vào giỏ</button>
                                                         <a href="#" className="ec-btn-group quickview" data-link-action="quickview"
                                                             title="Quick view" data-bs-toggle="modal"
                                                             data-bs-target="#ec_quickview_modal"><img
-                                                                src="./src/assets/images/icons/quickview.svg" className="svg_img pro_svg"
+                                                                src="/assets/images/icons/quickview.svg" className="svg_img pro_svg"
                                                                 alt="" /></a>
                                                     </div>
                                                 </div>
@@ -375,9 +411,9 @@ function MainHome() {
                                             <div className="ec-pro-image-outer">
                                                 <div className="ec-pro-image">
                                                     <a href="product-gallery-full-width.html" className="image">
-                                                        <img className="main-image" src="./src/assets/images/product-image/40_1.jpg"
+                                                        <img className="main-image" src="/assets/images/product-image/40_1.jpg"
                                                             alt="Product" />
-                                                        <img className="hover-image" src="./src/assets/images/product-image/40_2.jpg"
+                                                        <img className="hover-image" src="/assets/images/product-image/40_2.jpg"
                                                             alt="Product" />
                                                     </a>
                                                 </div>
@@ -388,20 +424,20 @@ function MainHome() {
                                                         <div className="ec-pro-color">
                                                             <ul className="ec-opt-swatch ec-change-img">
                                                                 <li className="active"><a href="#" className="ec-opt-clr-img"
-                                                                    data-src="./src/assets/images/product-image/40_1.jpg"
-                                                                    data-src-hover="./src/assets/images/product-image/40_1.jpg"
+                                                                    data-src="/assets/images/product-image/40_1.jpg"
+                                                                    data-src-hover="/assets/images/product-image/40_1.jpg"
                                                                     data-tooltip="Gray"><span
                                                                     ></span></a></li>
                                                                 <li><a href="#" className="ec-opt-clr-img"
-                                                                    data-src="./src/assets/images/product-image/40_2.jpg"
-                                                                    data-src-hover="./src/assets/images/product-image/40_2.jpg"
+                                                                    data-src="/assets/images/product-image/40_2.jpg"
+                                                                    data-src-hover="/assets/images/product-image/40_2.jpg"
                                                                     data-tooltip="Orange"><span
                                                                     ></span></a></li>
                                                             </ul>
                                                         </div>
                                                         <div className="ec-pro-compare">
                                                             <a href="compare.html" className="ec-btn-group compare"
-                                                                title="Compare"><img src="./src/assets/images/icons/compare_5.svg"
+                                                                title="Compare"><img src="/assets/images/icons/compare_5.svg"
                                                                     className="svg_img pro_svg" alt="" /></a>
                                                         </div>
                                                     </div>
@@ -428,14 +464,14 @@ function MainHome() {
                                                     <div className="ec-pro-desc">Lorem Ipsum is simply dummy text of the printing.</div>
                                                     <div className="ec-pro-actions">
                                                         <a className="ec-btn-group wishlist" title="Wishlist"><img
-                                                            src="./src/assets/images/icons/pro_wishlist.svg"
+                                                            src="/assets/images/icons/pro_wishlist.svg"
                                                             className="svg_img pro_svg" alt="" /></a>
                                                         <button title="Add To Cart" className="add-to-cart btn btn-primary">Thêm vào giỏ
                                                         </button>
                                                         <a href="#" className="ec-btn-group quickview" data-link-action="quickview"
                                                             title="Quick view" data-bs-toggle="modal"
                                                             data-bs-target="#ec_quickview_modal"><img
-                                                                src="./src/assets/images/icons/quickview.svg" className="svg_img pro_svg"
+                                                                src="/assets/images/icons/quickview.svg" className="svg_img pro_svg"
                                                                 alt="" /></a>
                                                     </div>
                                                 </div>
@@ -448,9 +484,9 @@ function MainHome() {
                                             <div className="ec-pro-image-outer">
                                                 <div className="ec-pro-image">
                                                     <a href="product-gallery-full-width.html" className="image">
-                                                        <img className="main-image" src="./src/assets/images/product-image/41_1.jpg"
+                                                        <img className="main-image" src="/assets/images/product-image/41_1.jpg"
                                                             alt="Product" />
-                                                        <img className="hover-image" src="./src/assets/images/product-image/41_2.jpg"
+                                                        <img className="hover-image" src="/assets/images/product-image/41_2.jpg"
                                                             alt="Product" />
                                                     </a>
                                                 </div>
@@ -461,20 +497,20 @@ function MainHome() {
                                                         <div className="ec-pro-color">
                                                             <ul className="ec-opt-swatch ec-change-img">
                                                                 <li className="active"><a href="#" className="ec-opt-clr-img"
-                                                                    data-src="./src/assets/images/product-image/41_1.jpg"
-                                                                    data-src-hover="./src/assets/images/product-image/41_1.jpg"
+                                                                    data-src="/assets/images/product-image/41_1.jpg"
+                                                                    data-src-hover="/assets/images/product-image/41_1.jpg"
                                                                     data-tooltip="Gray"><span
                                                                     ></span></a></li>
                                                                 <li><a href="#" className="ec-opt-clr-img"
-                                                                    data-src="./src/assets/images/product-image/41_2.jpg"
-                                                                    data-src-hover="./src/assets/images/product-image/41_2.jpg"
+                                                                    data-src="/assets/images/product-image/41_2.jpg"
+                                                                    data-src-hover="/assets/images/product-image/41_2.jpg"
                                                                     data-tooltip="Orange"><span
                                                                     ></span></a></li>
                                                             </ul>
                                                         </div>
                                                         <div className="ec-pro-compare">
                                                             <a href="compare.html" className="ec-btn-group compare"
-                                                                title="Compare"><img src="./src/assets/images/icons/compare_5.svg"
+                                                                title="Compare"><img src="/assets/images/icons/compare_5.svg"
                                                                     className="svg_img pro_svg" alt="" /></a>
                                                         </div>
                                                     </div>
@@ -502,13 +538,13 @@ function MainHome() {
                                                     <div className="ec-pro-desc">Lorem Ipsum is simply dummy text of the printing.</div>
                                                     <div className="ec-pro-actions">
                                                         <a className="ec-btn-group wishlist" title="Wishlist"><img
-                                                            src="./src/assets/images/icons/pro_wishlist.svg"
+                                                            src="/assets/images/icons/pro_wishlist.svg"
                                                             className="svg_img pro_svg" alt="" /></a>
                                                         <button title="Add To Cart" className="add-to-cart btn btn-primary">Thêm vào giỏ</button>
                                                         <a href="#" className="ec-btn-group quickview" data-link-action="quickview"
                                                             title="Quick view" data-bs-toggle="modal"
                                                             data-bs-target="#ec_quickview_modal"><img
-                                                                src="./src/assets/images/icons/quickview.svg" className="svg_img pro_svg"
+                                                                src="/assets/images/icons/quickview.svg" className="svg_img pro_svg"
                                                                 alt="" /></a>
                                                     </div>
                                                 </div>
@@ -521,9 +557,9 @@ function MainHome() {
                                             <div className="ec-pro-image-outer">
                                                 <div className="ec-pro-image">
                                                     <a href="product-gallery-full-width.html" className="image">
-                                                        <img className="main-image" src="./src/assets/images/product-image/42_1.jpg"
+                                                        <img className="main-image" src="/assets/images/product-image/42_1.jpg"
                                                             alt="Product" />
-                                                        <img className="hover-image" src="./src/assets/images/product-image/42_2.jpg"
+                                                        <img className="hover-image" src="/assets/images/product-image/42_2.jpg"
                                                             alt="Product" />
                                                     </a>
                                                 </div>
@@ -534,15 +570,15 @@ function MainHome() {
                                                         <div className="ec-pro-color">
                                                             <ul className="ec-opt-swatch ec-change-img">
                                                                 <li className="active"><a href="#" className="ec-opt-clr-img"
-                                                                    data-src="./src/assets/images/product-image/42_1.jpg"
-                                                                    data-src-hover="./src/assets/images/product-image/42_2.jpg"
+                                                                    data-src="/assets/images/product-image/42_1.jpg"
+                                                                    data-src-hover="/assets/images/product-image/42_2.jpg"
                                                                     data-tooltip="Gray"><span
                                                                     ></span></a></li>
                                                             </ul>
                                                         </div>
                                                         <div className="ec-pro-compare">
                                                             <a href="compare.html" className="ec-btn-group compare"
-                                                                title="Compare"><img src="./src/assets/images/icons/compare_5.svg"
+                                                                title="Compare"><img src="/assets/images/icons/compare_5.svg"
                                                                     className="svg_img pro_svg" alt="" /></a>
                                                         </div>
                                                     </div>
@@ -569,13 +605,13 @@ function MainHome() {
                                                     <div className="ec-pro-desc">Lorem Ipsum is simply dummy text of the printing.</div>
                                                     <div className="ec-pro-actions">
                                                         <a className="ec-btn-group wishlist" title="Wishlist"><img
-                                                            src="./src/assets/images/icons/pro_wishlist.svg"
+                                                            src="/assets/images/icons/pro_wishlist.svg"
                                                             className="svg_img pro_svg" alt="" /></a>
                                                         <button title="Add To Cart" className="add-to-cart btn btn-primary">Thêm vào giỏ</button>
                                                         <a href="#" className="ec-btn-group quickview" data-link-action="quickview"
                                                             title="Quick view" data-bs-toggle="modal"
                                                             data-bs-target="#ec_quickview_modal"><img
-                                                                src="./src/assets/images/icons/quickview.svg" className="svg_img pro_svg"
+                                                                src="/assets/images/icons/quickview.svg" className="svg_img pro_svg"
                                                                 alt="" /></a>
                                                     </div>
                                                 </div>
@@ -588,9 +624,9 @@ function MainHome() {
                                             <div className="ec-pro-image-outer">
                                                 <div className="ec-pro-image">
                                                     <a href="product-gallery-full-width.html" className="image">
-                                                        <img className="main-image" src="./src/assets/images/product-image/43_1.jpg"
+                                                        <img className="main-image" src="/assets/images/product-image/43_1.jpg"
                                                             alt="Product" />
-                                                        <img className="hover-image" src="./src/assets/images/product-image/43_2.jpg"
+                                                        <img className="hover-image" src="/assets/images/product-image/43_2.jpg"
                                                             alt="Product" />
                                                     </a>
                                                 </div>
@@ -601,20 +637,20 @@ function MainHome() {
                                                         <div className="ec-pro-color">
                                                             <ul className="ec-opt-swatch ec-change-img">
                                                                 <li className="active"><a href="#" className="ec-opt-clr-img"
-                                                                    data-src="./src/assets/images/product-image/43_1.jpg"
-                                                                    data-src-hover="./src/assets/images/product-image/43_1.jpg"
+                                                                    data-src="/assets/images/product-image/43_1.jpg"
+                                                                    data-src-hover="/assets/images/product-image/43_1.jpg"
                                                                     data-tooltip="Gray"><span
                                                                     ></span></a></li>
                                                                 <li><a href="#" className="ec-opt-clr-img"
-                                                                    data-src="./src/assets/images/product-image/43_2.jpg"
-                                                                    data-src-hover="./src/assets/images/product-image/43_2.jpg"
+                                                                    data-src="/assets/images/product-image/43_2.jpg"
+                                                                    data-src-hover="/assets/images/product-image/43_2.jpg"
                                                                     data-tooltip="Orange"><span
                                                                     ></span></a></li>
                                                             </ul>
                                                         </div>
                                                         <div className="ec-pro-compare">
                                                             <a href="compare.html" className="ec-btn-group compare"
-                                                                title="Compare"><img src="./src/assets/images/icons/compare_5.svg"
+                                                                title="Compare"><img src="/assets/images/icons/compare_5.svg"
                                                                     className="svg_img pro_svg" alt="" /></a>
                                                         </div>
                                                     </div>
@@ -641,13 +677,13 @@ function MainHome() {
                                                     <div className="ec-pro-desc">Lorem Ipsum is simply dummy text of the printing.</div>
                                                     <div className="ec-pro-actions">
                                                         <a className="ec-btn-group wishlist" title="Wishlist"><img
-                                                            src="./src/assets/images/icons/pro_wishlist.svg"
+                                                            src="/assets/images/icons/pro_wishlist.svg"
                                                             className="svg_img pro_svg" alt="" /></a>
                                                         <button title="Add To Cart" className="add-to-cart btn btn-primary">Thêm vào giỏ</button>
                                                         <a href="#" className="ec-btn-group quickview" data-link-action="quickview"
                                                             title="Quick view" data-bs-toggle="modal"
                                                             data-bs-target="#ec_quickview_modal"><img
-                                                                src="./src/assets/images/icons/quickview.svg" className="svg_img pro_svg"
+                                                                src="/assets/images/icons/quickview.svg" className="svg_img pro_svg"
                                                                 alt="" /></a>
                                                     </div>
                                                 </div>
@@ -660,9 +696,9 @@ function MainHome() {
                                             <div className="ec-pro-image-outer">
                                                 <div className="ec-pro-image">
                                                     <a href="product-gallery-full-width.html" className="image">
-                                                        <img className="main-image" src="./src/assets/images/product-image/44_1.jpg"
+                                                        <img className="main-image" src="/assets/images/product-image/44_1.jpg"
                                                             alt="Product" />
-                                                        <img className="hover-image" src="./src/assets/images/product-image/44_2.jpg"
+                                                        <img className="hover-image" src="/assets/images/product-image/44_2.jpg"
                                                             alt="Product" />
                                                     </a>
                                                 </div>
@@ -673,20 +709,20 @@ function MainHome() {
                                                         <div className="ec-pro-color">
                                                             <ul className="ec-opt-swatch ec-change-img">
                                                                 <li className="active"><a href="#" className="ec-opt-clr-img"
-                                                                    data-src="./src/assets/images/product-image/44_1.jpg"
-                                                                    data-src-hover="./src/assets/images/product-image/44_1.jpg"
+                                                                    data-src="/assets/images/product-image/44_1.jpg"
+                                                                    data-src-hover="/assets/images/product-image/44_1.jpg"
                                                                     data-tooltip="Gray"><span
                                                                     ></span></a></li>
                                                                 <li><a href="#" className="ec-opt-clr-img"
-                                                                    data-src="./src/assets/images/product-image/44_2.jpg"
-                                                                    data-src-hover="./src/assets/images/product-image/44_2.jpg"
+                                                                    data-src="/assets/images/product-image/44_2.jpg"
+                                                                    data-src-hover="/assets/images/product-image/44_2.jpg"
                                                                     data-tooltip="Orange"><span
                                                                     ></span></a></li>
                                                             </ul>
                                                         </div>
                                                         <div className="ec-pro-compare">
                                                             <a href="compare.html" className="ec-btn-group compare"
-                                                                title="Compare"><img src="./src/assets/images/icons/compare_5.svg"
+                                                                title="Compare"><img src="/assets/images/icons/compare_5.svg"
                                                                     className="svg_img pro_svg" alt="" /></a>
                                                         </div>
                                                     </div>
@@ -712,13 +748,13 @@ function MainHome() {
                                                     <div className="ec-pro-desc">Lorem Ipsum is simply dummy text of the printing.</div>
                                                     <div className="ec-pro-actions">
                                                         <a className="ec-btn-group wishlist" title="Wishlist"><img
-                                                            src="./src/assets/images/icons/pro_wishlist.svg"
+                                                            src="/assets/images/icons/pro_wishlist.svg"
                                                             className="svg_img pro_svg" alt="" /></a>
                                                         <button title="Add To Cart" className="add-to-cart btn btn-primary">Thêm vào giỏ</button>
                                                         <a href="#" className="ec-btn-group quickview" data-link-action="quickview"
                                                             title="Quick view" data-bs-toggle="modal"
                                                             data-bs-target="#ec_quickview_modal"><img
-                                                                src="./src/assets/images/icons/quickview.svg" className="svg_img pro_svg"
+                                                                src="/assets/images/icons/quickview.svg" className="svg_img pro_svg"
                                                                 alt="" /></a>
                                                     </div>
                                                 </div>
@@ -731,9 +767,9 @@ function MainHome() {
                                             <div className="ec-pro-image-outer">
                                                 <div className="ec-pro-image">
                                                     <a href="product-gallery-full-width.html" className="image">
-                                                        <img className="main-image" src="./src/assets/images/product-image/45_1.jpg"
+                                                        <img className="main-image" src="/assets/images/product-image/45_1.jpg"
                                                             alt="Product" />
-                                                        <img className="hover-image" src="./src/assets/images/product-image/45_2.jpg"
+                                                        <img className="hover-image" src="/assets/images/product-image/45_2.jpg"
                                                             alt="Product" />
                                                     </a>
                                                 </div>
@@ -744,15 +780,15 @@ function MainHome() {
                                                         <div className="ec-pro-color">
                                                             <ul className="ec-opt-swatch ec-change-img">
                                                                 <li className="active"><a href="#" className="ec-opt-clr-img"
-                                                                    data-src="./src/assets/images/product-image/45_1.jpg"
-                                                                    data-src-hover="./src/assets/images/product-image/45_2.jpg"
+                                                                    data-src="/assets/images/product-image/45_1.jpg"
+                                                                    data-src-hover="/assets/images/product-image/45_2.jpg"
                                                                     data-tooltip="Gray"><span
                                                                     ></span></a></li>
                                                             </ul>
                                                         </div>
                                                         <div className="ec-pro-compare">
                                                             <a href="compare.html" className="ec-btn-group compare"
-                                                                title="Compare"><img src="./src/assets/images/icons/compare_5.svg"
+                                                                title="Compare"><img src="/assets/images/icons/compare_5.svg"
                                                                     className="svg_img pro_svg" alt="" /></a>
                                                         </div>
                                                     </div>
@@ -779,13 +815,13 @@ function MainHome() {
                                                     <div className="ec-pro-desc">Lorem Ipsum is simply dummy text of the printing.</div>
                                                     <div className="ec-pro-actions">
                                                         <a className="ec-btn-group wishlist" title="Wishlist"><img
-                                                            src="./src/assets/images/icons/pro_wishlist.svg"
+                                                            src="/assets/images/icons/pro_wishlist.svg"
                                                             className="svg_img pro_svg" alt="" /></a>
                                                         <button title="Add To Cart" className="add-to-cart btn btn-primary">Thêm vào giỏ</button>
                                                         <a href="#" className="ec-btn-group quickview" data-link-action="quickview"
                                                             title="Quick view" data-bs-toggle="modal"
                                                             data-bs-target="#ec_quickview_modal"><img
-                                                                src="./src/assets/images/icons/quickview.svg" className="svg_img pro_svg"
+                                                                src="/assets/images/icons/quickview.svg" className="svg_img pro_svg"
                                                                 alt="" /></a>
                                                     </div>
                                                 </div>
@@ -798,9 +834,9 @@ function MainHome() {
                                             <div className="ec-pro-image-outer">
                                                 <div className="ec-pro-image">
                                                     <a href="product-gallery-full-width.html" className="image">
-                                                        <img className="main-image" src="./src/assets/images/product-image/46_1.jpg"
+                                                        <img className="main-image" src="/assets/images/product-image/46_1.jpg"
                                                             alt="Product" />
-                                                        <img className="hover-image" src="./src/assets/images/product-image/46_2.jpg"
+                                                        <img className="hover-image" src="/assets/images/product-image/46_2.jpg"
                                                             alt="Product" />
                                                     </a>
                                                 </div>
@@ -811,20 +847,20 @@ function MainHome() {
                                                         <div className="ec-pro-color">
                                                             <ul className="ec-opt-swatch ec-change-img">
                                                                 <li className="active"><a href="#" className="ec-opt-clr-img"
-                                                                    data-src="./src/assets/images/product-image/46_1.jpg"
-                                                                    data-src-hover="./src/assets/images/product-image/46_1.jpg"
+                                                                    data-src="/assets/images/product-image/46_1.jpg"
+                                                                    data-src-hover="/assets/images/product-image/46_1.jpg"
                                                                     data-tooltip="Gray"><span
                                                                     ></span></a></li>
                                                                 <li><a href="#" className="ec-opt-clr-img"
-                                                                    data-src="./src/assets/images/product-image/46_2.jpg"
-                                                                    data-src-hover="./src/assets/images/product-image/46_2.jpg"
+                                                                    data-src="/assets/images/product-image/46_2.jpg"
+                                                                    data-src-hover="/assets/images/product-image/46_2.jpg"
                                                                     data-tooltip="Orange"><span
                                                                     ></span></a></li>
                                                             </ul>
                                                         </div>
                                                         <div className="ec-pro-compare">
                                                             <a href="compare.html" className="ec-btn-group compare"
-                                                                title="Compare"><img src="./src/assets/images/icons/compare_5.svg"
+                                                                title="Compare"><img src="/assets/images/icons/compare_5.svg"
                                                                     className="svg_img pro_svg" alt="" /></a>
                                                         </div>
                                                     </div>
@@ -851,14 +887,14 @@ function MainHome() {
                                                     <div className="ec-pro-desc">Lorem Ipsum is simply dummy text of the printing.</div>
                                                     <div className="ec-pro-actions">
                                                         <a className="ec-btn-group wishlist" title="Wishlist"><img
-                                                            src="./src/assets/images/icons/pro_wishlist.svg"
+                                                            src="/assets/images/icons/pro_wishlist.svg"
                                                             className="svg_img pro_svg" alt="" /></a>
                                                         <button title="Add To Cart" className="add-to-cart btn btn-primary">Add To
                                                             Cart</button>
                                                         <a href="#" className="ec-btn-group quickview" data-link-action="quickview"
                                                             title="Quick view" data-bs-toggle="modal"
                                                             data-bs-target="#ec_quickview_modal"><img
-                                                                src="./src/assets/images/icons/quickview.svg" className="svg_img pro_svg"
+                                                                src="/assets/images/icons/quickview.svg" className="svg_img pro_svg"
                                                                 alt="" /></a>
                                                     </div>
                                                 </div>
@@ -880,7 +916,7 @@ function MainHome() {
                             <div className="ec-banner-left col-sm-6">
                                 <div className="ec-banner-block ec-banner-block-1 col-sm-12">
                                     <div className="banner-block">
-                                        <img src="./src/assets/images/banner/23.png" alt="" />
+                                        <img src="/assets/images/banner/23.png" alt="" />
                                         <div className="banner-content">
                                             <span className="ec-banner-stitle">Máy tính bảng lenovo</span>
                                             <span className="ec-banner-title">GIẢM GIÁ tới 70%</span>
@@ -892,7 +928,7 @@ function MainHome() {
                             <div className="ec-banner-right col-sm-6">
                                 <div className="ec-banner-block ec-banner-block-2 col-sm-12">
                                     <div className="banner-block">
-                                        <img src="./src/assets/images/banner/24.png" alt="" />
+                                        <img src="/assets/images/banner/24.png" alt="" />
                                         <div className="banner-content">
                                             <span className="ec-banner-stitle">Xiaoyi YI 1080p</span>
                                             <span className="ec-banner-title">Camera IP WiFi 36</span>
@@ -923,7 +959,7 @@ function MainHome() {
                                         <div className="ec-fs-pro-image-outer col-lg-6 col-md-6 col-sm-6">
                                             <div className="ec-fs-pro-image">
                                                 <a href="product-gallery-full-width.html" className="image"><img className="main-image"
-                                                    src="./src/assets/images/special-product/1_1.jpg" alt="Product" style={styleUuDai.img} /></a>
+                                                    src="/assets/images/special-product/1_1.jpg" alt="Product" style={styleUuDai.img} /></a>
                                             </div>
                                         </div>
                                         <div className="ec-pro-content col-lg-6 col-md-6 col-sm-6">
@@ -955,7 +991,7 @@ function MainHome() {
                                         <div className="ec-fs-pro-image-outer col-lg-6 col-md-6 col-sm-6">
                                             <div className="ec-fs-pro-image">
                                                 <a href="product-gallery-full-width.html" className="image"><img className="main-image"
-                                                    src="./src/assets/images/special-product/2_1.jpg" alt="Product" style={styleUuDai.img} /></a>
+                                                    src="/assets/images/special-product/2_1.jpg" alt="Product" style={styleUuDai.img} /></a>
                                             </div>
                                         </div>
                                         <div className="ec-pro-content col-lg-6 col-md-6 col-sm-6">
@@ -1019,7 +1055,7 @@ function MainHome() {
                                         <div className="ec-pro-image-outer">
                                             <div className="ec-pro-image">
                                                 <a href="product-gallery-full-width.html" className="image">
-                                                    <img className="main-image" src="./src/assets/images/product-image/39_1.jpg"
+                                                    <img className="main-image" src="/assets/images/product-image/39_1.jpg"
                                                         alt="Product" />
                                                 </a>
                                             </div>
@@ -1043,7 +1079,7 @@ function MainHome() {
                                         <div className="ec-pro-image-outer">
                                             <div className="ec-pro-image">
                                                 <a href="product-gallery-full-width.html" className="image">
-                                                    <img className="main-image" src="./src/assets/images/product-image/40_1.jpg"
+                                                    <img className="main-image" src="/assets/images/product-image/40_1.jpg"
                                                         alt="Product" />
                                                 </a>
                                             </div>
@@ -1067,7 +1103,7 @@ function MainHome() {
                                         <div className="ec-pro-image-outer">
                                             <div className="ec-pro-image">
                                                 <a href="product-gallery-full-width.html" className="image">
-                                                    <img className="main-image" src="./src/assets/images/product-image/41_1.jpg"
+                                                    <img className="main-image" src="/assets/images/product-image/41_1.jpg"
                                                         alt="Product" />
                                                 </a>
                                             </div>
@@ -1091,7 +1127,7 @@ function MainHome() {
                                         <div className="ec-pro-image-outer">
                                             <div className="ec-pro-image">
                                                 <a href="product-gallery-full-width.html" className="image">
-                                                    <img className="main-image" src="./src/assets/images/product-image/42_1.jpg"
+                                                    <img className="main-image" src="/assets/images/product-image/42_1.jpg"
                                                         alt="Product" />
                                                 </a>
                                             </div>
@@ -1115,7 +1151,7 @@ function MainHome() {
                                         <div className="ec-pro-image-outer">
                                             <div className="ec-pro-image">
                                                 <a href="product-gallery-full-width.html" className="image">
-                                                    <img className="main-image" src="./src/assets/images/product-image/43_1.jpg"
+                                                    <img className="main-image" src="/assets/images/product-image/43_1.jpg"
                                                         alt="Product" />
                                                 </a>
                                             </div>
@@ -1139,7 +1175,7 @@ function MainHome() {
                                         <div className="ec-pro-image-outer">
                                             <div className="ec-pro-image">
                                                 <a href="product-gallery-full-width.html" className="image">
-                                                    <img className="main-image" src="./src/assets/images/product-image/44_1.jpg"
+                                                    <img className="main-image" src="/assets/images/product-image/44_1.jpg"
                                                         alt="Product" />
                                                 </a>
                                             </div>
@@ -1163,7 +1199,7 @@ function MainHome() {
                                         <div className="ec-pro-image-outer">
                                             <div className="ec-pro-image">
                                                 <a href="product-gallery-full-width.html" className="image">
-                                                    <img className="main-image" src="./src/assets/images/product-image/45_1.jpg"
+                                                    <img className="main-image" src="/assets/images/product-image/45_1.jpg"
                                                         alt="Product" />
                                                 </a>
                                             </div>
@@ -1187,7 +1223,7 @@ function MainHome() {
                                         <div className="ec-pro-image-outer">
                                             <div className="ec-pro-image">
                                                 <a href="product-gallery-full-width.html" className="image">
-                                                    <img className="main-image" src="./src/assets/images/product-image/46_1.jpg"
+                                                    <img className="main-image" src="/assets/images/product-image/46_1.jpg"
                                                         alt="Product" />
                                                 </a>
                                             </div>
@@ -1220,7 +1256,7 @@ function MainHome() {
                                         <div className="ec-pro-image-outer">
                                             <div className="ec-pro-image">
                                                 <a href="product-gallery-full-width.html" className="image">
-                                                    <img className="main-image" src="./src/assets/images/product-image/42_1.jpg"
+                                                    <img className="main-image" src="/assets/images/product-image/42_1.jpg"
                                                         alt="Product" />
                                                 </a>
                                             </div>
@@ -1244,7 +1280,7 @@ function MainHome() {
                                         <div className="ec-pro-image-outer">
                                             <div className="ec-pro-image">
                                                 <a href="product-gallery-full-width.html" className="image">
-                                                    <img className="main-image" src="./src/assets/images/product-image/43_1.jpg"
+                                                    <img className="main-image" src="/assets/images/product-image/43_1.jpg"
                                                         alt="Product" />
                                                 </a>
                                             </div>
@@ -1268,7 +1304,7 @@ function MainHome() {
                                         <div className="ec-pro-image-outer">
                                             <div className="ec-pro-image">
                                                 <a href="product-gallery-full-width.html" className="image">
-                                                    <img className="main-image" src="./src/assets/images/product-image/44_1.jpg"
+                                                    <img className="main-image" src="/assets/images/product-image/44_1.jpg"
                                                         alt="Product" />
                                                 </a>
                                             </div>
@@ -1292,7 +1328,7 @@ function MainHome() {
                                         <div className="ec-pro-image-outer">
                                             <div className="ec-pro-image">
                                                 <a href="product-gallery-full-width.html" className="image">
-                                                    <img className="main-image" src="./src/assets/images/product-image/45_1.jpg"
+                                                    <img className="main-image" src="/assets/images/product-image/45_1.jpg"
                                                         alt="Product" />
                                                 </a>
                                             </div>
@@ -1316,7 +1352,7 @@ function MainHome() {
                                         <div className="ec-pro-image-outer">
                                             <div className="ec-pro-image">
                                                 <a href="product-gallery-full-width.html" className="image">
-                                                    <img className="main-image" src="./src/assets/images/product-image/41_1.jpg"
+                                                    <img className="main-image" src="/assets/images/product-image/41_1.jpg"
                                                         alt="Product" />
                                                 </a>
                                             </div>
@@ -1340,7 +1376,7 @@ function MainHome() {
                                         <div className="ec-pro-image-outer">
                                             <div className="ec-pro-image">
                                                 <a href="product-gallery-full-width.html" className="image">
-                                                    <img className="main-image" src="./src/assets/images/product-image/39_1.jpg"
+                                                    <img className="main-image" src="/assets/images/product-image/39_1.jpg"
                                                         alt="Product" />
                                                 </a>
                                             </div>
@@ -1364,7 +1400,7 @@ function MainHome() {
                                         <div className="ec-pro-image-outer">
                                             <div className="ec-pro-image">
                                                 <a href="product-gallery-full-width.html" className="image">
-                                                    <img className="main-image" src="./src/assets/images/product-image/40_1.jpg"
+                                                    <img className="main-image" src="/assets/images/product-image/40_1.jpg"
                                                         alt="Product" />
                                                 </a>
                                             </div>
@@ -1388,7 +1424,7 @@ function MainHome() {
                                         <div className="ec-pro-image-outer">
                                             <div className="ec-pro-image">
                                                 <a href="product-gallery-full-width.html" className="image">
-                                                    <img className="main-image" src="./src/assets/images/product-image/46_1.jpg"
+                                                    <img className="main-image" src="/assets/images/product-image/46_1.jpg"
                                                         alt="Product" />
                                                 </a>
                                             </div>
@@ -1421,7 +1457,7 @@ function MainHome() {
                                         <div className="ec-pro-image-outer">
                                             <div className="ec-pro-image">
                                                 <a href="product-gallery-full-width.html" className="image">
-                                                    <img className="main-image" src="./src/assets/images/product-image/44_1.jpg"
+                                                    <img className="main-image" src="/assets/images/product-image/44_1.jpg"
                                                         alt="Product" />
                                                 </a>
                                             </div>
@@ -1445,7 +1481,7 @@ function MainHome() {
                                         <div className="ec-pro-image-outer">
                                             <div className="ec-pro-image">
                                                 <a href="product-gallery-full-width.html" className="image">
-                                                    <img className="main-image" src="./src/assets/images/product-image/45_1.jpg"
+                                                    <img className="main-image" src="/assets/images/product-image/45_1.jpg"
                                                         alt="Product" />
                                                 </a>
                                             </div>
@@ -1469,7 +1505,7 @@ function MainHome() {
                                         <div className="ec-pro-image-outer">
                                             <div className="ec-pro-image">
                                                 <a href="product-gallery-full-width.html" className="image">
-                                                    <img className="main-image" src="./src/assets/images/product-image/42_1.jpg"
+                                                    <img className="main-image" src="/assets/images/product-image/42_1.jpg"
                                                         alt="Product" />
                                                 </a>
                                             </div>
@@ -1493,7 +1529,7 @@ function MainHome() {
                                         <div className="ec-pro-image-outer">
                                             <div className="ec-pro-image">
                                                 <a href="product-gallery-full-width.html" className="image">
-                                                    <img className="main-image" src="./src/assets/images/product-image/43_1.jpg"
+                                                    <img className="main-image" src="/assets/images/product-image/43_1.jpg"
                                                         alt="Product" />
                                                 </a>
                                             </div>
@@ -1517,7 +1553,7 @@ function MainHome() {
                                         <div className="ec-pro-image-outer">
                                             <div className="ec-pro-image">
                                                 <a href="product-gallery-full-width.html" className="image">
-                                                    <img className="main-image" src="./src/assets/images/product-image/40_1.jpg"
+                                                    <img className="main-image" src="/assets/images/product-image/40_1.jpg"
                                                         alt="Product" />
                                                 </a>
                                             </div>
@@ -1541,7 +1577,7 @@ function MainHome() {
                                         <div className="ec-pro-image-outer">
                                             <div className="ec-pro-image">
                                                 <a href="product-gallery-full-width.html" className="image">
-                                                    <img className="main-image" src="./src/assets/images/product-image/41_1.jpg"
+                                                    <img className="main-image" src="/assets/images/product-image/41_1.jpg"
                                                         alt="Product" />
                                                 </a>
                                             </div>
@@ -1565,7 +1601,7 @@ function MainHome() {
                                         <div className="ec-pro-image-outer">
                                             <div className="ec-pro-image">
                                                 <a href="product-gallery-full-width.html" className="image">
-                                                    <img className="main-image" src="./src/assets/images/product-image/46_1.jpg"
+                                                    <img className="main-image" src="/assets/images/product-image/46_1.jpg"
                                                         alt="Product" />
                                                 </a>
                                             </div>
@@ -1589,7 +1625,7 @@ function MainHome() {
                                         <div className="ec-pro-image-outer">
                                             <div className="ec-pro-image">
                                                 <a href="product-gallery-full-width.html" className="image">
-                                                    <img className="main-image" src="./src/assets/images/product-image/39_1.jpg"
+                                                    <img className="main-image" src="/assets/images/product-image/39_1.jpg"
                                                         alt="Product" />
                                                 </a>
                                             </div>
@@ -1614,7 +1650,7 @@ function MainHome() {
                         <div className="col-lg-3 col-md-6 col-sm-12 col-xs-6 ec-right-banner-content dis-n-767">
                             <div className="ec-right-banner-inner">
                                 <div className="right-banner-block">
-                                    <img className="right-banner-img" src="./src/assets/images/banner/22.png" alt="Banner" />
+                                    <img className="right-banner-img" src="/assets/images/banner/22.png" alt="Banner" />
                                     <div className="right-banner-content">
                                         <span className="ec-right-banner-title">mi 8 lite</span>
                                         <span className="ec-right-banner-stitle">selfies and style</span>
@@ -1629,7 +1665,7 @@ function MainHome() {
             </section>
 
             <section className="section ec-test-section section-space-ptb-100 section-space-mt section-space-mb">
-                {/* style={{backgroundImage: URL('./src/assets/images/testimonial/testimonial_bg.jpg')}} */}
+                {/* style={{backgroundImage: URL('/assets/images/testimonial/testimonial_bg.jpg')}} */}
                 <div className="container">
                     <div className="row">
                         <div className="col-md-12 section-title-block">
@@ -1645,7 +1681,7 @@ function MainHome() {
                                 <li className="ec-test-item">
                                     <div className="ec-test-inner">
                                         <div className="ec-test-img"><img alt="testimonial" title="testimonial"
-                                            src="./src/assets/images/testimonial/1.jpg" /></div>
+                                            src="/assets/images/testimonial/1.jpg" /></div>
                                         <div className="ec-test-content">
                                             <div className="ec-test-name">Nano</div>
                                             <div className="ec-test-designation">Việt Nam</div>
@@ -1665,7 +1701,7 @@ function MainHome() {
                                 <li className="ec-test-item">
                                     <div className="ec-test-inner">
                                         <div className="ec-test-img"><img alt="testimonial" title="testimonial"
-                                            src="./src/assets/images/testimonial/2.jpg" /></div>
+                                            src="/assets/images/testimonial/2.jpg" /></div>
                                         <div className="ec-test-content">
                                             <div className="ec-test-name">Lương Văn Bịp</div>
                                             <div className="ec-test-designation">Việt Nam</div>
@@ -1685,7 +1721,7 @@ function MainHome() {
                                 <li className="ec-test-item">
                                     <div className="ec-test-inner">
                                         <div className="ec-test-img"><img alt="testimonial" title="testimonial"
-                                            src="./src/assets/images/testimonial/3.jpg" /></div>
+                                            src="/assets/images/testimonial/3.jpg" /></div>
                                         <div className="ec-test-content">
                                             <div className="ec-test-name">Zũn Đé</div>
                                             <div className="ec-test-designation">Việt Nam</div>
@@ -1705,7 +1741,7 @@ function MainHome() {
                                 <li className="ec-test-item">
                                     <div className="ec-test-inner">
                                         <div className="ec-test-img"><img alt="testimonial" title="testimonial"
-                                            src="./src/assets/images/testimonial/1.jpg" /></div>
+                                            src="/assets/images/testimonial/1.jpg" /></div>
                                         <div className="ec-test-content">
                                             <div className="ec-test-name">Thuận Nè</div>
                                             <div className="ec-test-designation">Việt Nam</div>
@@ -1736,31 +1772,31 @@ function MainHome() {
                             <ul id="ec-brand-slider" style={styleBrand}>
                                 <li className="ec-brand-item">
                                     <div className="ec-brand-img"><a href="#"><img alt="brand" title="brand"
-                                        src="./src/assets/images/brand-image/1.png" /></a></div>
+                                        src="/assets/images/brand-image/1.png" /></a></div>
                                 </li>
                                 <li className="ec-brand-item">
                                     <div className="ec-brand-img"><a href="#"><img alt="brand" title="brand"
-                                        src="./src/assets/images/brand-image/2.png" /></a></div>
+                                        src="/assets/images/brand-image/2.png" /></a></div>
                                 </li>
                                 <li className="ec-brand-item">
                                     <div className="ec-brand-img"><a href="#"><img alt="brand" title="brand"
-                                        src="./src/assets/images/brand-image/3.png" /></a></div>
+                                        src="/assets/images/brand-image/3.png" /></a></div>
                                 </li>
                                 <li className="ec-brand-item">
                                     <div className="ec-brand-img"><a href="#"><img alt="brand" title="brand"
-                                        src="./src/assets/images/brand-image/4.png" /></a></div>
+                                        src="/assets/images/brand-image/4.png" /></a></div>
                                 </li>
                                 <li className="ec-brand-item">
                                     <div className="ec-brand-img"><a href="#"><img alt="brand" title="brand"
-                                        src="./src/assets/images/brand-image/5.png" /></a></div>
+                                        src="/assets/images/brand-image/5.png" /></a></div>
                                 </li>
                                 <li className="ec-brand-item">
                                     <div className="ec-brand-img"><a href="#"><img alt="brand" title="brand"
-                                        src="./src/assets/images/brand-image/6.png" /></a></div>
+                                        src="/assets/images/brand-image/6.png" /></a></div>
                                 </li>
                                 <li className="ec-brand-item">
                                     <div className="ec-brand-img"><a href="#"><img alt="brand" title="brand"
-                                        src="./src/assets/images/brand-image/7.png" /></a></div>
+                                        src="/assets/images/brand-image/7.png" /></a></div>
                                 </li>
                             </ul>
                         </div>
@@ -1775,34 +1811,34 @@ function MainHome() {
                             <h2 className="d-none">Instagram</h2>
                             <div className="ec-insta-item">
                                 <div className="ec-insta-inner">
-                                    <a href="#" target="_blank"><img src="./src/assets/images/instragram-image/1.jpg" alt="" />
+                                    <a href="#" target="_blank"><img src="/assets/images/instragram-image/1.jpg" alt="" />
                                     </a>
                                 </div>
                             </div>
                             <div className="ec-insta-item">
                                 <div className="ec-insta-inner">
-                                    <a href="#" target="_blank"><img src="./src/assets/images/instragram-image/2.jpg" alt="" />
+                                    <a href="#" target="_blank"><img src="/assets/images/instragram-image/2.jpg" alt="" />
 
                                     </a>
                                 </div>
                             </div>
                             <div className="ec-insta-item">
                                 <div className="ec-insta-inner">
-                                    <a href="#" target="_blank"><img src="./src/assets/images/instragram-image/3.jpg" alt="" />
+                                    <a href="#" target="_blank"><img src="/assets/images/instragram-image/3.jpg" alt="" />
 
                                     </a>
                                 </div>
                             </div>
                             <div className="ec-insta-item">
                                 <div className="ec-insta-inner">
-                                    <a href="#" target="_blank"><img src="./src/assets/images/instragram-image/4.jpg" alt="" />
+                                    <a href="#" target="_blank"><img src="/assets/images/instragram-image/4.jpg" alt="" />
 
                                     </a>
                                 </div>
                             </div>
                             <div className="ec-insta-item">
                                 <div className="ec-insta-inner">
-                                    <a href="#" target="_blank"><img src="./src/assets/images/instragram-image/5.jpg" alt="" />
+                                    <a href="#" target="_blank"><img src="/assets/images/instragram-image/5.jpg" alt="" />
 
                                     </a>
                                 </div>
@@ -1819,7 +1855,7 @@ function MainHome() {
                         <div className="ec_ser_content ec_ser_content_1 col-sm-12 col-md-3">
                             <div className="ec_ser_inner">
                                 <div className="ec-service-image">
-                                    <img src="./src/assets/images/icons/service_5_1.svg" className="svg_img" alt="" />
+                                    <img src="/assets/images/icons/service_5_1.svg" className="svg_img" alt="" />
                                 </div>
                                 <div className="ec-service-desc">
                                     <h2>Miễn phí vận chuyển</h2>
@@ -1830,7 +1866,7 @@ function MainHome() {
                         <div className="ec_ser_content ec_ser_content_2 col-sm-12 col-md-3">
                             <div className="ec_ser_inner">
                                 <div className="ec-service-image">
-                                    <img src="./src/assets/images/icons/service_2.svg" className="svg_img" alt="" />
+                                    <img src="/assets/images/icons/service_2.svg" className="svg_img" alt="" />
                                 </div>
                                 <div className="ec-service-desc">
                                     <h2>đảm bảo tiền</h2>
@@ -1841,7 +1877,7 @@ function MainHome() {
                         <div className="ec_ser_content ec_ser_content_3 col-sm-12 col-md-3">
                             <div className="ec_ser_inner">
                                 <div className="ec-service-image">
-                                    <img src="./src/assets/images/icons/service_3.svg" className="svg_img" alt="" />
+                                    <img src="/assets/images/icons/service_3.svg" className="svg_img" alt="" />
                                 </div>
                                 <div className="ec-service-desc">
                                     <h2>hỗ trợ trực tuyến</h2>
@@ -1852,7 +1888,7 @@ function MainHome() {
                         <div className="ec_ser_content ec_ser_content_4 col-sm-12 col-md-3">
                             <div className="ec_ser_inner">
                                 <div className="ec-service-image">
-                                    <img src="./src/assets/images/icons/service_5_4.svg" className="svg_img" alt="" />
+                                    <img src="/assets/images/icons/service_5_4.svg" className="svg_img" alt="" />
                                 </div>
                                 <div className="ec-service-desc">
                                     <h2>Giảm giá thành viên</h2>

@@ -94,7 +94,7 @@ function Header() {
             return (
                 <>
                     <button className="dropdown-toggle" data-bs-toggle="dropdown"><img
-                        src="./src/assets/images/icons/user_5.svg" className="svg_img top_svg" alt="" /><span
+                        src="/assets/images/icons/user_5.svg" className="svg_img top_svg" alt="" /><span
                             className="ec-btn-title"><b>{email}</b></span></button>
                     <ul className="dropdown-menu dropdown-menu-right">
                         <li><Link to="/profile" className="dropdown-item">Trang cá nhân</Link></li>
@@ -108,7 +108,7 @@ function Header() {
             <>
                 <div>
                     <button className="dropdown-toggle" data-bs-toggle="dropdown"><img
-                        src="./src/assets/images/icons/user_5.svg" className="svg_img top_svg" alt="" /><span
+                        src="/assets/images/icons/user_5.svg" className="svg_img top_svg" alt="" /><span
                             className="ec-btn-title">Đăng nhập</span></button>
                     <ul className="dropdown-menu dropdown-menu-right">
                         <li><Link to="/signup" className="dropdown-item" >Đăng ký</Link></li>
@@ -161,6 +161,13 @@ function Header() {
         dispatch(cartSlice.actions.changeCart(ca))
         dispatch(accountSlice.actions.getProfile(dtUser))
         await setDoc(doc(db,'Users', uid),dtUser)
+        Eggy({
+            title: ' ',
+            message: `Xóa sản phẩm thành công!`,
+            position: 'top-left',
+            type: 'success',
+            duration: 1000
+        });
 
     }
     return (
@@ -220,7 +227,7 @@ function Header() {
                                     <div className="ec-header-user dropdown" id='userSS'>
                                         {checkingLogin()}
                                         {/* <button className="dropdown-toggle" data-bs-toggle="dropdown"><img
-                                            src="./src/assets/images/icons/user_5.svg" className="svg_img top_svg" alt="" /><span
+                                            src="/assets/images/icons/user_5.svg" className="svg_img top_svg" alt="" /><span
                                                 className="ec-btn-title">Đăng nhập</span></button>
                                         <ul className="dropdown-menu dropdown-menu-right">
                                             <li><Link to="/signup" className="dropdown-item" href="register.html">Đăng ký</Link></li>
@@ -232,7 +239,7 @@ function Header() {
                                     {/* <!-- Header wishlist Start --> */}
                                     <div className="ec-header-wishlist">
                                         <a href="#">
-                                            <div className="top-icon"><img src="./src/assets/images/icons/pro_wishlist.svg"
+                                            <div className="top-icon"><img src="/assets/images/icons/pro_wishlist.svg"
                                                 className="svg_img top_svg" alt="" /></div>
                                             <span className="ec-btn-title">danh sách yêu thích</span>
                                         </a>
@@ -246,7 +253,7 @@ function Header() {
                                     {/* <!-- Header User Start --> */}
                                     <div className="ec-header-user dropdown">
                                         <button className="dropdown-toggle" data-bs-toggle="dropdown"><img
-                                            src="./src/assets/images/icons/user_5.svg" className="svg_img header_svg" alt="" /></button>
+                                            src="/assets/images/icons/user_5.svg" className="svg_img header_svg" alt="" /></button>
                                         <ul className="dropdown-menu dropdown-menu-right">
                                             <li><a className="dropdown-item" href="register.html">Đăng ký</a></li>
                                             <li><a className="dropdown-item" href="checkout.html">Thanh toán</a></li>
@@ -256,14 +263,14 @@ function Header() {
                                     {/* <!-- Header User End --> */}
                                     {/* <!-- Header Cart Start --> */}
                                     <a href="#" className="ec-header-btn ec-header-wishlist">
-                                        <div className="header-icon"><img src="./src/assets/images/icons/wishlist.svg"
+                                        <div className="header-icon"><img src="/assets/images/icons/wishlist.svg"
                                             className="svg_img header_svg" alt="" /></div>
                                         <span className="ec-header-count ec-wishlist-count">0</span>
                                     </a>
                                     {/* <!-- Header Cart End --> */}
                                     {/* <!-- Header Cart Start --> */}
                                     <a href="#ec-side-cart" className="ec-header-btn ec-side-toggle">
-                                        <div className="header-icon"><img src="./src/assets/images/icons/cart_5.svg"
+                                        <div className="header-icon"><img src="/assets/images/icons/cart_5.svg"
                                             className="svg_img header_svg" alt="" /></div>
                                         <span className="ec-header-count ec-cart-count">0</span>
                                     </a>
@@ -289,7 +296,7 @@ function Header() {
                                 {/* <!-- Ec Header Logo Start --> */}
                                 <div className="align-self-center ec-header-logo ">
                                     <div className="header-logo">
-                                        <Link to="/"><img src="./src/assets/images/logo/logo-5.png" alt="Site Logo" /></Link>
+                                        <Link to="/"><img src="/assets/images/logo/logo-5.png" alt="Site Logo" /></Link>
                                     </div>
                                 </div>
                                 {/* <!-- Ec Header Logo End --> */}
@@ -320,7 +327,7 @@ function Header() {
                                         {/* <!-- Header wishlist End --> */}
                                         {/* <!-- Header Cart Start --> */}
                                         <a className="ec-header-btn ec-side-toggle" onClick={cartMini}>
-                                            <div className="header-icon"><img src="./src/assets/images/icons/cart_5.svg"
+                                            <div className="header-icon"><img src="/assets/images/icons/cart_5.svg"
                                                 className="svg_img header_svg" alt="" /></div>
                                             <span className="ec-btn-title"><span className="ec-cart-count"></span> sản phẩm</span>
 
@@ -341,8 +348,8 @@ function Header() {
                             {/* <!-- Ec Header Logo Start --> */}
                             <div className="col">
                                 <div className="header-logo">
-                                    <a href="index.html"><img src="./src/assets/images/logo/logo-5.png" alt="Site Logo" /><img
-                                        className="dark-logo" src="./src/assets/images/logo/dark-logo-5.png" alt="Site Logo"
+                                    <a href="index.html"><img src="/assets/images/logo/logo-5.png" alt="Site Logo" /><img
+                                        className="dark-logo" src="/assets/images/logo/dark-logo-5.png" alt="Site Logo"
                                     /></a>
                                 </div>
                             </div>
@@ -458,16 +465,16 @@ function Header() {
                                                 <li>
                                                     <ul className="ec-main-banner w-100">
                                                         <li><a className="p-0" href="shop-left-sidebar-col-3.html"><img
-                                                            className="img-responsive" src="./src/assets/images/menu-banner/1.jpg"
+                                                            className="img-responsive" src="/assets/images/menu-banner/1.jpg"
                                                             alt="" /></a></li>
                                                         <li><a className="p-0" href="shop-left-sidebar-col-4.html"><img
-                                                            className="img-responsive" src="./src/assets/images/menu-banner/2.jpg"
+                                                            className="img-responsive" src="/assets/images/menu-banner/2.jpg"
                                                             alt="" /></a></li>
                                                         <li><a className="p-0" href="shop-right-sidebar-col-3.html"><img
-                                                            className="img-responsive" src="./src/assets/images/menu-banner/3.jpg"
+                                                            className="img-responsive" src="/assets/images/menu-banner/3.jpg"
                                                             alt="" /></a></li>
                                                         <li><a className="p-0" href="shop-right-sidebar-col-4.html"><img
-                                                            className="img-responsive" src="./src/assets/images/menu-banner/4.jpg"
+                                                            className="img-responsive" src="/assets/images/menu-banner/4.jpg"
                                                             alt="" /></a></li>
                                                     </ul>
                                                 </li>
@@ -715,7 +722,7 @@ function Header() {
                                             </ul>
                                         </li>
                                         <li><a className="p-0" href="shop-left-sidebar-col-3.html"><img className="img-responsive"
-                                            src="./src/assets/images/menu-banner/1.jpg" alt="" /></a>
+                                            src="/assets/images/menu-banner/1.jpg" alt="" /></a>
                                         </li>
                                     </ul>
                                 </li>
@@ -954,7 +961,7 @@ function Header() {
                             }
                             {/* <li>
                                 <a href="product-gallery-full-width.html" className="sidecart_pro_img"><img
-                                    src="./src/assets/images/product-image/39_1.jpg" alt="product" /></a>
+                                    src="/assets/images/product-image/39_1.jpg" alt="product" /></a>
                                 <div className="ec-pro-content">
                                     <a href="single-product-gallery-full-width.html" className="cart_pro_title">Máy ảnh tức thì với hai album</a>
                                     <span className="cart-price"><span>$450</span> x 1</span>
@@ -966,7 +973,7 @@ function Header() {
                             </li> */}
                             {/* <li>
                                 <a href="product-gallery-full-width.html" className="sidecart_pro_img"><img
-                                    src="./src/assets/images/product-image/40_1.jpg" alt="product" /></a>
+                                    src="/assets/images/product-image/40_1.jpg" alt="product" /></a>
                                 <div className="ec-pro-content">
                                     <a href="product-gallery-full-width.html" className="cart_pro_title">Google nest không dây</a>
                                     <span className="cart-price"><span>$360</span> x 1</span>
@@ -978,7 +985,7 @@ function Header() {
                             </li>
                             <li>
                                 <a href="product-gallery-full-width.html" className="sidecart_pro_img"><img
-                                    src="./src/assets/images/product-image/41_1.jpg" alt="product" /></a>
+                                    src="/assets/images/product-image/41_1.jpg" alt="product" /></a>
                                 <div className="ec-pro-content">
                                     <a href="product-gallery-full-width.html" className="cart_pro_title">Earbuds không dây thế hệ thứ 3</a>
                                     <span className="cart-price"><span>$30</span> x 1</span>

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import '../../../assets/css/checkout.scss'
+// import '../../../assets/css/checkout.scss'
 import { useSelector, useDispatch } from 'react-redux'
 import { getCart } from '../../store/selectors/cartSelector'
 import currency from 'currency.js'
@@ -13,12 +13,14 @@ import Alert from 'react-bootstrap/Alert';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import { getProfile } from '../../store/selectors/accountSelector'
 import { firebaseConfig } from '../../../firebase/config'
-import { getFirestore, doc, getDoc, collection, setDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, collection, setDoc, query, getDocs, updateDoc } from 'firebase/firestore';
 import { initializeApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
 import cartSlice from '../../store/sclice/cartSlice'
 import accountSlice from '../../store/sclice/accountSlice'
 import { v4 as uuidv4 } from 'uuid';
+import { Eggy } from '@s-r0/eggy-js';
+import adminSlice from '../../store/sclice/adminSlice'
 
 const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
@@ -32,11 +34,42 @@ const CheckOut = () => {
     // console.log(cart)
     const uid = localStorage.getItem("UID")
     const profile = useSelector(getProfile)
+    const storage = useSelector((state) => state.admin.Storage)
+    // console.log(storage)
     // console.log(profile)
 
     useEffect(() => {
-
+        getStores()
     }, [])
+
+    // const ttas = async () => {
+    //     const docRef = doc(db, "Stores", "LAPTOP");
+    //     const docSnap = await getDoc(docRef);
+
+    //     if (docSnap.exists()) {
+    //         console.log("Document data:", docSnap.data());
+    //     } else {
+    //         // docSnap.data() will be undefined in this case
+    //         console.log("No such document!");
+    //     }
+    // }
+    const getStores = async () => {
+        let q = query(collection(db, "Stores"))
+        const querySnapshot = await getDocs(q);
+        let arr = []
+        let listS = []
+        let sale = 0
+        let totalStorage = 0
+        querySnapshot.forEach((doc) => {
+            listS.push(
+                {
+                    product: doc.id,
+                    stores: doc.data(),
+                }
+            )
+        });
+        dispatch(adminSlice.actions.getStorage(listS))
+    }
 
     const handleCheckout = async () => {
         let email = document.querySelector("#email").value
@@ -45,17 +78,39 @@ const CheckOut = () => {
         let phone = document.querySelector("#phone").value
         let note = document.querySelector("#note").value
         let now = new Date()
+        console.log(storage)
 
+        cart.forEach((item, index) => {
+            // console.log(item)
+            storage.forEach((it, id) => {
+                if (it.product == item.categories) {
+                    console.log(it)
+                    console.log(item.uid)
+                    Object.keys(it.stores).forEach(async (i) => {
+                        let saleU = item.quantity + it.stores[i].SALE
+                        console.log("Quantity: ", saleU)
+                        let refU = doc(db, "Stores", item.categories)
 
+                        await updateDoc(refU,
+                            {
+                                [`${item.uid}`]: {
+                                    KHO: it.stores[i].KHO,
+                                    SALE: saleU
+                                }
+                            })
+                    })
+                }
+            })
+        })
         let cartOder = {
             profile: {
-            email: email,
-            name: name,
-            address: address,
-            phone: phone,
-            note: note,
-            thanhtoan: 'Trực tiếp',
-            date: now.toLocaleString()
+                email: email,
+                name: name,
+                address: address,
+                phone: phone,
+                note: note,
+                thanhtoan: 'Trực tiếp',
+                date: now.toLocaleString()
             },
             listCart: cart,
             uid: uuidv4(),
@@ -84,7 +139,13 @@ const CheckOut = () => {
         console.log(profileUser)
         dispatch(cartSlice.actions.changeCart([]))
         dispatch(accountSlice.actions.getProfile(profileUser))
-        await setDoc(doc(db,'Users', uid),profileUser)
+        await setDoc(doc(db, 'Users', uid), profileUser)
+        Eggy({
+            title: 'Sign In',
+            message: `Thanh toán thành công!`,
+            type: 'success',
+            duration: 1000
+        });
     }
 
     return (
@@ -103,7 +164,7 @@ const CheckOut = () => {
 
                             <Form.Group className="mb-3" controlId="name">
                                 <Form.Label>Full Name</Form.Label>
-                                <Form.Control type='text' defaultValue={profile.name}/>
+                                <Form.Control type='text' defaultValue={profile.name} />
                             </Form.Group>
 
                             <Form.Group className="mb-3" controlId="address">
@@ -146,7 +207,7 @@ const CheckOut = () => {
                                     as="textarea"
                                     placeholder="Leave a comment here"
                                     style={{ height: '100px' }}
-                                    
+
                                 />
                             </Form.Group>
 

@@ -77,6 +77,7 @@ const LoginAdmin = (props) => {
                                 type: 'success',
                                 duration: 1000
                             })
+                            localStorage.setItem("UID",user.uid)
                                 navigate('../main')
                         } else {
                             await Eggy({

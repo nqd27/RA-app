@@ -26,6 +26,8 @@ import { Provider } from 'react-redux'
 import store from './views/store/store'
 import CartDetailUser from './views/pages/ProfileUser/CartDetailUser'
 import CartAdmin from './views/pages/Admin/Carts/CartAdmin'
+import CartDetailAdmin from './views/pages/Admin/Carts/CartDetailAdmin'
+import Statistical from './views/pages/Admin/Statistical/Statistical'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -55,6 +57,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Route path='cart'>
               <Route index element={<Navigate to='main'/>}/>
               <Route path='main' element={<CartAdmin title={'QUẢN LÝ ĐƠN HÀNG'} />}/>
+              <Route path='uid/:id/:idU' element={<CartDetailAdmin title={'ĐƠN HÀNG'}/>}  />
+          </Route>
+          <Route path='statis'>
+              <Route index element={<Navigate to='main'/>}/>
+              <Route path='main' element={<Statistical title={'TRANG THỐNG KÊ'} />}/>
           </Route>
           <Route path='product'>
             <Route index element={<Navigate to='main' />} />

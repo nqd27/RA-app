@@ -9,15 +9,15 @@ function Footer() {
                         <div className="row">
                             <div className="col-sm-12 col-lg-4 ec-footer-contact">
                                 <div className="ec-footer-widget">
-                                    <div className="ec-footer-logo"><a href="#"><img src="./src/assets/images/logo/footer-logo-5.png"
-                                        alt=""/><img className="dark-footer-logo" src="./src/assets/images/logo/dark-logo-5.png"
+                                    <div className="ec-footer-logo"><a href="#"><img src="/assets/images/logo/footer-logo-5.png"
+                                        alt=""/><img className="dark-footer-logo" src="/assets/images/logo/dark-logo-5.png"
                                             alt="Site Logo" style={{display: 'none'}} /></a></div>
                                     <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
                                     <h4 className="ec-footer-heading">Đặt câu hỏi cho Tôi</h4>
                                     <div className="ec-footer-links">
                                         <ul className="align-items-center">
                                             <li className="ec-footer-link">
-                                                <span className="call-img"><img src="./src/assets/images/icons/call_5.svg"
+                                                <span className="call-img"><img src="/assets/images/icons/call_5.svg"
                                                     className="svg_img foo_img" alt="" /></span>
                                                 <span className="call-desc">
                                                     <span>Bạn có thắc mắc? Gọi cho chúng tôi 24/7!</span>
@@ -95,9 +95,9 @@ function Footer() {
                                 </div>
                                 <div className="ec-footer-widget ec-share">
                                     <ul>
-                                        <li className="ec-share-link"><a href="#"><img src="./src/assets/images/icons/iphone.png"
+                                        <li className="ec-share-link"><a href="#"><img src="/assets/images/icons/iphone.png"
                                             alt="" /></a></li>
-                                        <li className="ec-share-link"><a href="#"><img src="./src/assets/images/icons/google.png"
+                                        <li className="ec-share-link"><a href="#"><img src="/assets/images/icons/google.png"
                                             alt="" /></a></li>
                                     </ul>
                                 </div>
@@ -120,7 +120,7 @@ function Footer() {
                             <div className="col footer-bottom-right">
                                 <div className="footer-bottom-payment d-flex justify-content-end">
                                     <div className="payment-link">
-                                        <img src="./src/assets/images/icons/payment.png" alt=""/>
+                                        <img src="/assets/images/icons/payment.png" alt=""/>
                                     </div>
 
                                 </div>

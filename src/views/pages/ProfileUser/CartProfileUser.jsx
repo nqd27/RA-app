@@ -7,7 +7,7 @@ import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from 'firebas
 import { initializeApp } from 'firebase/app'
 import { getFirestore, doc, getDoc } from 'firebase/firestore'
 import { useEffect, useState } from 'react'
-import '../../../assets/css/cartUser.scss'
+<link rel="stylesheet" href='/assets/css/cartUser.scss' /> 
 import accountSlice from '../../store/sclice/accountSlice'
 import { useSelector, useDispatch } from 'react-redux'
 import { getProfile } from '../../store/selectors/accountSelector'
